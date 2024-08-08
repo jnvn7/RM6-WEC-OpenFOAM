@@ -5,8 +5,8 @@ Reference Model 6 (RM6) is a Backward Bent Duct Buoy (BBDB), a type of oscillati
 &nbsp;
 
 <p align="middle">
-  <img src="https://github.com/jnvn7/RM6-WEC-OpenFoam/blob/main/images/rm6.png" height="300"/>
-  <img src="https://github.com/jnvn7/RM6-WEC-OpenFoam/blob/main/images/rm6-dimensions.png" height="300"/>
+  <img src="https://github.com/jnvn7/RM6-WEC-OpenFoam/blob/main/images/rm6.png" height="200"/>
+  <img src="https://github.com/jnvn7/RM6-WEC-OpenFoam/blob/main/images/rm6-dimensions.png" height="200"/>
 </p>
 
 <p align='middle'> Figure 1 - RM6 BBDB Device Design and Dimensions</p>

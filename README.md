@@ -1,6 +1,6 @@
 # RM6-WEC-OpenFoam
 
-## Installation
+## Case Descriptions
 
 ## Documentation
 

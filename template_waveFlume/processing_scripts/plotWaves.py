@@ -2,6 +2,20 @@
 import numpy as np
 import coreFuncs as cF
 import matplotlib.pyplot as plt
+#-------------------------------Adjust some plot settings----------------------------#
+plt.rcParams['figure.dpi'] = 400
+colors = np.array(
+['#4477AA', # blue
+  '#66CCEE', # cyan
+  '#228833', # green
+  '#CCBB44', # yellow 
+  '#EE6677', # red
+  '#AA3377', # purple
+  '#BBBBBB'] # grey]
+)
+
+# colormap from: https://personal.sron.nl/~pault/
+plt.rcParams['axes.prop_cycle'] = plt.cycler(color=colors)
 
 #---------------------------------Read In Flow Settings----------------------------#
 # Set constants and directories

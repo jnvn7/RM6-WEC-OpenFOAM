@@ -54,6 +54,7 @@ The case directory is organized with the following key subdirectories and files:
 * setIrregWave.py:  
 * coreFuncs.py: 
 
+**<tt>flowParams</tt>:** this file provides wave tank and wave model setup. (!) (TODO: add more)
 
 The case additionally contains the following scripts which are related to running the case: 
 * <tt>Allrun.ser</tt>: A script that performs all the necessary steps to run the case in serial (on one processor). Even if the eventual goal is to run the case in parallel, running the case in serial is a good step for checking if the case works properly before attempting to run in parallel. 
@@ -62,9 +63,7 @@ The case additionally contains the following scripts which are related to runnin
 
 * <tt>Allclean</tt>: A script that can be run to "clean" the case directory. This will remove output files from a previous run, whilst preserving all the core files needed to run the case. 
 
-* <tt>flowParams</tt>: 
-
-* <tt>restart.sh</tt>: 
+* <tt>restart.sh</tt>: This script is called by <tt>Allrun</tt> (or <tt>Allrun.ser</tt>) in the event a current simulation run already exists, and we want to restart from the latest output of the previous run. The script will move the existing logfile and postProcessing data files into a backup storage directory. 
 
 ## Running the Case
 <div align="justify">

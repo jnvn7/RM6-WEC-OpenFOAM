@@ -56,11 +56,15 @@ The case directory is organized with the following key subdirectories and files:
 
 
 The case additionally contains the following scripts which are related to running the case: 
-* Allrun.ser: 
-* Allrun: 
-* Allclean: 
-* flowParams: 
-* restart.sh: 
+* <tt>Allrun.ser</tt>: A script that performs all the necessary steps to run the case in serial (on one processor). Even if the eventual goal is to run the case in parallel, running the case in serial is a good step for checking if the case works properly before attempting to run in parallel. 
+
+* <tt>Allrun</tt>: A script that performs all the necessary steps to run the case in parallel (on multiple processors). Note that the number of processors to use for the case is specified in system/decomposeParDict. 
+
+* <tt>Allclean</tt>: A script that can be run to "clean" the case directory. This will remove output files from a previous run, whilst preserving all the core files needed to run the case. 
+
+* <tt>flowParams</tt>: 
+
+* <tt>restart.sh</tt>: 
 
 ## Running the Case
 <div align="justify">

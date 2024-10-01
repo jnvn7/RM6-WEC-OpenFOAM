@@ -31,6 +31,9 @@ else
   fi
 fi
 
+# Create a .foam file, to be used for visualization in paraview: 
+touch viz.foam
+
 # Start the simulation
 runParallel $(getApplication)
 if [ $? -ne 0 ]; then

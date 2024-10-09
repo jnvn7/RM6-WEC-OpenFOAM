@@ -74,13 +74,15 @@ The case directory of <tt> OpenFOAM </tt> dictionary files is organized with the
 
 **processing_scripts**
 
+_Note:_ (TODO) list the python packages needed to run each script
+
 * <tt>plotWaves.py</tt>: This script can be used to plot the height of the waves simulated in the case at various probe locations along the wave tank. The actual probe locations are specified in the <tt>flowParams</tt> dictionary, and the function which generates the probe data is defined in <tt>system/controlDict</tt>. The wave probe data is then stored in postProcessing/interfaceHeight1. For more information on the wave probes, see [Defining the wave probes](#defining-the-wave-probes). 
 
 * <tt>setIrregWave.py</tt>:  TODO
 
 * <tt>coreFuncs.py</tt>: TODO
 
-* <tt>compareSolutions.py</tt>: TODO -- need to write this script as well 
+* <tt>compareSolutions.py</tt>: TODO -- need to write this script as well . This shouldn't require inputs from the user ... so assume their data directory will just be called "postProcessing"
 
 The case additionally contains the following scripts which are related to running the case: 
 * <tt>Allrun.ser</tt>: A script that performs all the necessary steps to run the case in serial (on one processor). Even if the eventual goal is to run the case in parallel, running the case in serial is a good step for checking if the case works properly before attempting to run in parallel. 
@@ -224,19 +226,26 @@ Running the case:
 
 ### Irregular waves
 Preliminary setup: 
-1. Check <tt>flowParams</tt> and ensure that the <tt>waveType</tt> is set to <tt>1</tt> for simulating irregular waves. 
-1. Select the desired wave model for the <tt>waveModel</tt> entry in <tt>flowParams</tt>. The available wave models and their usage are outlined in the header commented section of <tt>flowParams</tt>.
-1. Choose the desired wave properties in <tt>flowParams</tt>, i.e. <tt>waveHeight</tt> and <tt>wavePeriod</tt> (TODO: is this still relevant?)
-1. (TODO: double check this works, clean up writing) run the python script <tt>processing_scripts/setIrregWave.py</tt> to generate the appropriate <tt>constant/waveInput.txt</tt> file. 
-    Output of this script should look like: 
+1. Check <tt>flowParams</tt> and ensure that the <tt>waveType</tt> variable is set to <tt>1</tt> for simulating irregular waves. 
+
+    _Note:_ Selecting a <tt>waveType</tt> of <tt>1</tt> will set up the case to utilize <tt>OpenFOAM</tt>'s <tt>irregularMultiDirectional</tt> wave modeling approach in conjunction with a  <tt>waveInput.txt</tt> file that specifies further information about the wave spectrum. The generation of the <tt>waveInput.txt</tt> file is done in this tutorial with the <tt>processing_scripts/setIrregularWave.py</tt> script, as described in step 4.
+
+1. Select the desired wave model for the <tt>waveModel</tt> entry in <tt>flowParams</tt>. The available wave models and their usage are outlined in the header commented section of <tt>flowParams</tt>. In the case of irregular waves, additional information must be provided related to desired frequencies in the spectrum -- the minimum frequency, maximum frequency, and number of frequencies to model. 
+
+1. Choose the desired wave properties in <tt>flowParams</tt>, i.e. <tt>waveHeight</tt> and <tt>wavePeriod</tt>. (NOTE: should we give more info on what those values _mean_ for irregular?  )
+
+1. Move into the <tt>processing_scripts</tt> directory, and run the script called <tt>setIrregWave.py</tt>, i.e.:  
     ```
-    TODO-- add example
+    [user@machine irregular_waveFlume]$ cd processing_scripts/
+    [user@machine processing_scripts]$ python setIrregWave.py
     ```
+     This will generate a file called <tt>constant/waveInput.txt</tt>, which specifies a time-series of wave information for <tt>OpenFOAM</tt>'s  <tt>irregularMultiDirectional</tt> model to use. 
 
 Running the case: 
 1. Replicate steps for running the case outlined in [Regular waves](#regular-waves)
 
-(TODO: add example outputs ?)
+
+(TODO: add example outputs)
 ## Post-processing
 
 <div align="justify">

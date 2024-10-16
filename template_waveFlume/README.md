@@ -8,12 +8,11 @@ TODO: Brief intro blurb/image? similar to how Jessica has for main page
 </div>
 &nbsp;
 
-<!-- <p align="middle">
-  <img src="https://github.com/jnvn7/RM6-WEC-OpenFoam/blob/main/images/rm6.png" height="200"/>
-  <img src="https://github.com/jnvn7/RM6-WEC-OpenFoam/blob/main/images/rm6-dimensions.png" height="200"/>
+<p align="middle">
+  <img src="https://github.com/jnvn7/RM6-WEC-OpenFoam/blob/main/images/waveFlume_snapshot.png" height="200"/>
 </p>
 
-<p align='middle'> Figure 1 - RM6 BBDB Device Design and Dimensions</p> -->
+<p align='middle'> Figure 1 - Example 2D wave flume simulation, with hydrostatic pressure and fluid velocity vectors visualized. </p>
 
 Write about the wave settings, how they are selected, etc. Jessica provided this info in an email.
 

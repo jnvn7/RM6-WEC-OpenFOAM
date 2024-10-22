@@ -24,20 +24,17 @@ This directory houses a templated example for 2D wave flume simulations using <t
 &nbsp; -->
 
 The case directory of <tt> OpenFOAM </tt> dictionary files is organized with the following key subdirectories and files described below. However, for more minor adjustments to the case, such as changing domain/mesh size, or modifying wave properties or models, the key files the user should note are: 
-*  <tt>flowParams</tt>
-*  <tt>system/caseSetup</tt>
-*  (TODO: add more?)
-
+*  <tt>flowParams</tt> - for the majority of adjustments
+*  <tt>system/caseSetup</tt> - for adjustments by more experienced users 
 
 **<tt>flowParams</tt>:** This file provides information related to the wave tank and wave model setup to the solver. For example, in this file, the user can specify things such as: the wave type (regular or irregular), the wave model utilized, wave height/period, positioning of wave probes to measure the surface height, or quantities related to mesh control (i.e. cells per wave height, cells per wave length). The <tt>flowParams</tt> file is included in other <tt>OpenFOAM</tt> dictionary files with the expression <tt>#include "..flowParams";</tt>, so that settings specified in <tt>flowParams</tt> can be utilized in those dictionary files. 
 
 **system**
 * <tt>caseSetup</tt>: Defines many of the quantities needed by <tt>blockMeshDict</tt> to create the simulation domain and mesh. Many of the parameters used in <tt>caseSetup</tt> are specified by the user in <tt>flowParams</tt>. 
 
-* <tt>controlDict</tt>: Specifies main case control settings such as timing, timestep, and file write settings. This dictionary can also house user-defined function objects. In this particular case, the <tt>controlDict</tt> dictionary houses a function called <tt>interfaceHeight1</tt> which samples the free-surface height of the wave at specified probe locations along the wave tank. 
+* <tt>controlDict</tt>: Specifies main case control settings such as timing, timestep, and file write settings. This dictionary can also house user-defined function objects. In this particular case, the <tt>controlDict</tt> dictionary houses a function called <tt>interfaceHeight1</tt> which samples the free-surface height of the wave at specified probe locations along the wave tank. This data will be output into a directory called <tt>postProcessing</tt> as the simulation runs. 
 
-
-* <tt>blockMeshDict</tt>: Defines the mesh geometry and boundary conditions. (TODO: note here where else a user would need to edit to change boundary conditions)
+* <tt>blockMeshDict</tt>: Defines the mesh geometry and boundary conditions.
 
 * <tt>setFieldsDict</tt>: Used to set specified field values on a specified set of cells/faces/etc. In this case, it is used to set the initial conditon of the $\alpha_{\text{water}}$ variable, which denotes the phase (air or water), to 1 (water) below the still water level (of $z=0.0$), and to 0 (air) above the still water level.
 
@@ -70,15 +67,13 @@ The case directory of <tt> OpenFOAM </tt> dictionary files is organized with the
 
 **processing_scripts**
 
-_Note:_ (TODO) list the python packages needed to run each script
-
 * <tt>plotWaves.py</tt>: This script can be used to plot the height of the waves simulated in the case at various probe locations along the wave tank. The actual probe locations are specified in the <tt>flowParams</tt> dictionary, and the function which generates the probe data is defined in <tt>system/controlDict</tt>. The wave probe data is then stored in postProcessing/interfaceHeight1. For more information on the wave probes, see [Defining the wave probes](#defining-the-wave-probes). 
 
-* <tt>setIrregWave.py</tt>:  TODO
+* <tt>setIrregWave.py</tt>:  This script is used to generate the <tt>WaveInput.txt</tt> file utilized in the case that irregular waves are specified, based on the user-defined settings provided in <tt>flowParams</tt>. 
 
-* <tt>coreFuncs.py</tt>: TODO
+* <tt>coreFuncs.py</tt>: This script houses core wave-related functionalities utilized in the other two scripts. This includes modules that will calculate analytical solutions to different wave models (i.e. Stokes 5th), or wave height and period based on a provided script. 
 
-* <tt>compareSolutions.py</tt>: TODO -- need to write this script as well . This shouldn't require inputs from the user ... so assume their data directory will just be called "postProcessing"
+_Note:_ In order to run the included python scripts in this directory, the user should have the following python packages installed: <tt>sys</tt>, <tt>numpy</tt>, <tt>pandas</tt>, <tt>glob</tt>, and <tt>matplotlib</tt>. 
 
 The case additionally contains the following scripts which are related to running the case: 
 * <tt>Allrun.ser</tt>: A script that performs all the necessary steps to run the case in serial (on one processor). Even if the eventual goal is to run the case in parallel, running the case in serial is a good step for checking if the case works properly before attempting to run in parallel. 
@@ -89,12 +84,7 @@ The case additionally contains the following scripts which are related to runnin
 
 * <tt>restart.sh</tt>: This script is called by <tt>Allrun</tt> (or <tt>Allrun.ser</tt>) in the event a current simulation run already exists, and we want to restart from the latest output of the previous run. The script will move the existing logfile and postProcessing data files into a backup storage directory. 
 
-
-Lastly, as the case runs, a new directory will be created called <tt>postProcessing</tt>. This will contain data files related to the wave probes defined using <tt>flowParams</tt> and <tt>system/controlDict</tt>, and further described in [Defining the wave probes](#defining-the-wave-probes). 
-
-
-## Defining the wave probes
-<div align="justify"> TODO: write blurb on what the wave probes are, how they are defined, etc. just so it's all in one place 
+Lastly, as the case runs, a new directory will be created called <tt>postProcessing</tt>. This will contain data files related to the wave probes defined using <tt>flowParams</tt> and <tt>system/controlDict</tt>. 
 
 ## Running the Case
 <div align="justify">
@@ -243,20 +233,6 @@ Running the case:
 ## Post-processing
 
 <div align="justify">
-<!-- TODO's:    
-* write about the post-processing scripts, and how to run them. 
-* Include a plot of what the results should look like.
-*   -TODO: add one for irregular  
-* Include a "true solution" file 
-* Write script that will compare whatever is run with "true soln" results to make sure people can do a 1:1 comparision -- if they use the same settings, they should get the same thing 
-* add some comments to the post-processing scripts  (if needed)
-
-* add some screenshots of how it should look in paraview . 
-
-* maybe add brief description of how to viz in paraview?
-</div>
-&nbsp; -->
-
 
 To post-process data about the wave flume simulation, the python script <tt>processing_scripts/setIrregWave.py</tt> has been provided. This script will plot the data generated by the wave probes and output by the simulation in <tt> postProcessing</tt>. If regular waves have been specified, the script will also calculate an estimate of the wave height and period of the signal measured by each probe. 
 

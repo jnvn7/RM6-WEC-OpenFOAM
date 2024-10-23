@@ -44,6 +44,6 @@ For each example case, pre-packaged wave probe data is provided as a "sanity che
 To check if this is the case, the user can use the provided python script <tt>plotWavesCompare.py</tt> in the <tt>processing_scripts</tt> directory. Running this script will plot the pre-packaged data against the user-generated data for each wave probe in the simulation. Example output of this script should look like Figure 1 below. 
 
 <p align="middle">
-  <img src="https://github.com/jnvn7/RM6-WEC-OpenFoam/blob/main/images/case1-prepack-vs-usergen-example-figure.png" height="800"/>
+  <img src="https://github.com/jnvn7/RM6-WEC-OpenFoam/blob/main/images/case1-prepack-vs-usergen-example-figure.png" width="400"/>
 </p>
 <p align='middle'> Figure 1 - Example output of the <tt>plotWavesCompare.py</tt> python script, plotting the user-generated wave probe data vs. the pre-packaged wave probe data for each probe. </p>

@@ -1,0 +1,84 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "caseSetup"
+
+application     interFoam;
+
+startFrom       latestTime; //or startTime;	
+
+startTime       $startTime;
+
+stopAt          endTime;
+
+endTime         $endTime; 
+
+deltaT          0.01;
+
+writeControl    adjustable;
+
+writeInterval   $writeVTK;
+
+purgeWrite      0;
+
+writeFormat     binary;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  on;
+
+maxCo           0.65;
+
+maxAlphaCo      0.65;
+
+maxDeltaT       $maxDeltaT;
+
+functions
+{
+    interfaceHeight1
+    {
+	// Mandatory entries (unmodifiable)
+        type            interfaceHeight;
+        libs            (fieldFunctionObjects);
+
+	// Mandatory entries (runtime modifiable)
+	locations	(($Probe1 0 -1) 
+			 ($Probe2 0 -1) 
+			 ($Probe3 0 -1)
+			 ($Probe4 0 -1)
+			 ($Probe5 0 -1));
+
+	// Optional entries (runtime modifiable)
+	alpha		alpha.water;
+	liquid		true;
+	direction	(0 0 1);
+        interpolationScheme cellPoint;
+	writeControl    adjustable;
+	writeInterval   $writeElev;
+    }
+}
+
+
+// ************************************************************************* //

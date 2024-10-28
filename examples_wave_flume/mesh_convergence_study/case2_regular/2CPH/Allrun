@@ -1,0 +1,48 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Source the tutorial run functions for use here
+#------------------------------------------------------------------------------#
+
+# Set up the simulation folder
+if [ -f log.interFoam ] # if the logfile already exists, run the restart sequence (in restart.sh)
+then
+  ./restart.sh
+else
+  # Clean the run directory
+  ./Allclean
+  restore0Dir
+
+  # Create the flume's simulation grid
+  runApplication blockMesh
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+
+  # Decompose the case for parallel run
+  runApplication decomposePar
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+
+  # Run setFields to set initial conditions
+  runParallel setFields
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+fi
+
+# Create a .foam file, to be used for visualization in paraview: 
+touch viz.foam
+
+# Start the simulation
+runParallel $(getApplication)
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+
+#runApplication reconstructPar # (optional: uncomment to reconstruct the results from a decomposed result into a reconstructed one)
+
+#runApplication foamToVTK # (optional: uncomment to convert from OpenFOAM output format to VTK)
+
+#------------------------------------------------------------------------------#

@@ -1,0 +1,65 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      waveProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "../flowParams";
+
+inlet
+{
+    alpha           alpha.water;
+
+    #if #eval { $waveType == 0 }
+	    waveModel       $waveModel;
+        waveHeight      $waveHeight;
+        wavePeriod      $wavePeriod;
+        waveAngle       $waveAngle;
+
+    #elif #eval { $waveType == 1 }
+        #include "waveInput.txt";
+    	waveModel	    irregularMultiDirectional;
+        waveHeights     $waveHeights;
+        wavePeriods     $wavePeriods;
+        waveAngles      $waveAngles;
+
+    #else
+        flagErr         #codeStream
+        {
+            code
+            #{
+                Info << nl << "'Invalid waveType input. 0: Regular Waves. 1: Irregular Waves." << nl << nl;
+                const int err=1;
+                std::exit(err);
+            #};
+        };
+    #endif
+
+    nPaddle         1;
+
+    rampTime        #eval { 2*$wavePeriod };
+
+    activeAbsorption yes;
+}
+
+outlet
+{
+    alpha           alpha.water;
+
+    waveModel       shallowWaterAbsorption;
+
+    nPaddle         1;
+}
+
+// ************************************************************************* //

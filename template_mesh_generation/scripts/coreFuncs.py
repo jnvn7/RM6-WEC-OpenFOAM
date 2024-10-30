@@ -173,23 +173,27 @@ def fftSignal(Fs, signal):
     return (Freqs, signalFFT)
 
 # Wave Dispersion Calculation using Newton Raphson
-def waveNumber(g, omega, d):
-    k0 = 1;
-    err = 1;
-    count = 0;
-    while (err >= 10e-8 and count <= 100):
-        f0 = omega*omega - g*k0*np.tanh(k0*d)
-        fp0 = -g*np.tanh(k0*d)-g*k0*d*(1-np.tanh(k0*d)*np.tanh(k0*d))
-        k1 = k0 - f0/fp0
-        err = abs(k1-k0)
-        k0 = k1
-        count += 1
-
-    if (count >= 100):
-        print('Can\'t find solution for dispersion equation!')
-        exit()
+def waveNumber(g, omega, d, deepWater=False):
+    if (deepWater):
+        period = 2*np.pi/omega
+        k0 = 4*np.pi**2/g/period/period
     else:
-        return(k0)
+        k0 = 1;
+        err = 1;
+        count = 0;
+        while (err >= 10e-8 and count <= 100):
+            f0 = omega*omega - g*k0*np.tanh(k0*d)
+            fp0 = -g*np.tanh(k0*d)-g*k0*d*(1-np.tanh(k0*d)*np.tanh(k0*d))
+            k1 = k0 - f0/fp0
+            err = abs(k1-k0)
+            k0 = k1
+            count += 1
+
+        if (count >= 100):
+            print('Can\'t find solution for dispersion equation!')
+            sys.exit()
+
+    return(k0)
 
 # Wave Spectrums
 def wave_components(f,S, time, seed=123, frequency_bins=None,phases=None):

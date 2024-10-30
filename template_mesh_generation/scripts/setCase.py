@@ -10,7 +10,6 @@ tankWidth2D = 0.01
 #---------------------------------Read In Flow Settings----------------------------#
 # Read flowParams file
 rOut = cF.readFlowParamMeshing(cF.flowParams)
-waveL = 2*np.pi/cF.waveNumber(g, 2*np.pi/rOut["wavePeriod"], rOut["waterDepth"])
 
 ##-----------------------------Unpack flowParams Properties------------------------#
 # Find the Object Bounding Box
@@ -20,6 +19,7 @@ boundingBox = cF.readBoundingBox()
 sim3D = rOut["sim3D"]
 waveHeight = rOut["waveHeight"]
 wavePeriod = rOut["wavePeriod"]
+waveL = 2*np.pi/cF.waveNumber(g, 2*np.pi/rOut["wavePeriod"], rOut["waterDepth"], deepWater=True)
 
 # Object Mesh and Refinement Parameters
 objName = rOut["objName"]

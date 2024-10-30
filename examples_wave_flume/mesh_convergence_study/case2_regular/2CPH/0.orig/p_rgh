@@ -32,13 +32,13 @@ boundaryField
     {
         //type            zeroGradient;
         type            fixedFluxPressure;
-        value           uniform 0;
+        value           $internalField;
     }
 
     atmosphere
     {
         type            totalPressure;
-        p0              uniform 0;
+        p0              $internalField;
     }
 
     bottom

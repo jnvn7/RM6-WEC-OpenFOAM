@@ -16,7 +16,7 @@ FoamFile
 
 nodes   1;
 
-cpn     12;
+cpn     36;
 
 numberOfSubdomains #eval { $nodes*$cpn };
 

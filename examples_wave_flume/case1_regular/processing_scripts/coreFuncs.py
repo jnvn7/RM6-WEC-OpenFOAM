@@ -47,7 +47,7 @@ def readFlowParams(flowParamsFile):
     return rOut
 
 #--------------------------Get wave prob data---------------------------#
-def importWaveData(waveDataDir):
+def importElevData(waveDataDir):
     eleFile = sorted(glob.glob(waveDataDir))
 
     data = pd.read_csv(eleFile[0], sep="\s+|\t", header=None, engine="python")

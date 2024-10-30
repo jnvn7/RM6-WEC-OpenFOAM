@@ -72,7 +72,6 @@
 
 // Time control
     rampTime        #eval { 2.0*$wavePeriod };
-    maxDeltaT       #eval { $wavePeriod*$deltaX/2/$waveLength/$dtContr };
 
     #if #eval { $endTime == 0 }
         #if #eval { $waveType == 0 }

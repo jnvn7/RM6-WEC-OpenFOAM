@@ -16,49 +16,56 @@
 // Wave parameters
 
 	sim3D		    0;		    // 0: 2D. 1: 3D
-	waterDepth	    4.0;		// ~1:15th scale for 67.5 (m)
+	waterDepth	    4.0;		//
 
     waveEngine      0;
     waveType        0;		    // 0: regular. 1: irregular
     waveModel       StokesII;	// For irregular wave, follow format above.
-    waveHeight      0.5;       // 1:15th scale for 1.75 (m)
-    wavePeriod      2.58;       // 1:15th scale for 8.50 (s)
+    waveHeight      0.5;       
+    wavePeriod      2.58;       
 	waveAngle	    0.0;
 	wavePhase	    0.0;
 
+    simType         laminar;            // laminar or RAS
+    turbModel       realizableKE;   // kEpsilon, kOmegaSST, realizableKE, etc.
+
 // Wave Tank Dimensions
 
-	tankLength	    0.0;		// Set as 0 for default (4x waveLength)	 
-	tankHeight	    0.0;		// Set as 0 for default (2x waterDepth)
+	tankLength	    0.0;		// Set to 0 to parameterize with waveLength*lengthContr
+	tankHeight	    0.0;		// Set to 0 for default (2x waterDepth)
 	tankWidth	    5;		    // Only use for 3D simulation. 
+	lengthContr	    10;		    // tankLength = lengthContr*waveLength
 
 // Time Control
 	
-    startTime       0.0;     // or latestTime
-	endTime		    0;	        // Set as 0 to for 20T (regular) and 500T (irregular)
+    startTime       0.0;        // or latestTime
+	endTime		    35;	        // Set as 0 to for 20T (regular) and 500T (irregular)
 	writeElev	    0.1;		// second(s)
 	writeVTK	    1.0;		// second(s)
 
 // Wave Probe Distance from Tank Inlet
 
-    Probe1          0.1;        // Multiple of waveLength from the flume's inlet
+    Probe1          0.1;        // Multiple of waveLength from the flume inlet
     Probe2          0.5;
     Probe3          1.0;
     Probe4          1.5;
     Probe5          2.0;
 
 /*------------------------------------------------------------*\
-|             Mesh Control                                    |
+|             Grid and Time Step Control                       |
 \*------------------------------------------------------------*/
 
-// Mesh Control
-	
-	xContr          125;		// Cells per wave length
-	zContr          2;		    // Cells per wave height
-	hContr		    3.0;        // Height of refinement zone over waveHeight
-	zExpContr	    1.5;	    // Cell expansion rate outside the refinement zone
-	dtContr		    1;		    // maxDeltaT = wavePeriod*deltaX/2/waveLength/dtContr
+// Grid Control
 
-	lengthContr	    10;		    // tankLength = lengthContr*waveLength
+	xContr          500;                // Cells per wave length. Cell size = min(dx,dz)
+	zContr          8;		            // Cells per wave height
+	hContr		    3.0;                // Height of refinement zone over waveHeight
+    zExpContr       1.5;                // Cell expansion rate outside the refinement zone
+
+// Time Step Control
+
+    maxCo           0.65;   
+	maxDeltaT		0.01;
+
 
 // ************************************************************************* //

@@ -15,8 +15,6 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-turbk   0.000553383769275965;
-
 dimensions      [0 2 -2 0 0 0 0];
 
 internalField   uniform 0.00000001;
@@ -28,25 +26,25 @@ boundaryField
     inlet
     {
         type            inletOutlet;
-        inletValue      uniform $turbk;
-        value           uniform 0.00000001;
+        inletValue      $internalField;
+        value           $internalField;
     }
     outlet
     {
         type            inletOutlet;
-        inletValue      uniform 0.00000001;
-        value           uniform 0.00000001;
+        inletValue      $internalField;
+        value           $internalField;
     }
     atmosphere
     {
         type            inletOutlet;
-        inletValue      uniform 0.00000001;
-        value           uniform 0.00000001;
+        inletValue      $internalField;
+        value           $internalField;
     }
     bottom
     {
         type            kqRWallFunction;
-        value           uniform 0.00000001;
+        value           $internalField;
     }
 }
 

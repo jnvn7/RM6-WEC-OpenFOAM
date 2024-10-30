@@ -48,20 +48,12 @@ solvers
         relTol          0;
     }
 
-    U
+    "(U|k|epsilon|omega|B|nuTilda).*"
     {
         solver          PBiCG;
         preconditioner  DILU;
         tolerance       1e-6;
         relTol          0.1;
-    }
-
-    UFinal
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-6;
-        relTol          0;
     }
 }
 

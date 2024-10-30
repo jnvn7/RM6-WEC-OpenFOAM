@@ -52,9 +52,10 @@ def readFlowParams(flowParamsFile):
 
 #--------------------------Get wave prob data---------------------------#
 def importWaveData(case, wavePath=waveDataPath):
-    eleFile = sorted(glob.glob(case+wavePath))
+    eleFile = sorted(glob.glob(os.path.join(case,wavePath)))
 
     if (len(eleFile)==0):
+        print(eleFile)
         print('No elevation data found. Check wavePath input!')
         sys.exit()
 
@@ -81,7 +82,7 @@ def evalWaveData(case, wavePath=waveDataPath, iProbe=3, nStart=8, nFFT=5):
     iProbe -= 1
 
     # Read flowParams file and set constant
-    rf = readFlowParams(case+'/flowParams')
+    rf = readFlowParams(os.path.join(case,'flowParams'))
 
     # Get wave data from '<postProcessing> dir'
     [nProbes, time, elevSims] = importWaveData(case, wavePath)

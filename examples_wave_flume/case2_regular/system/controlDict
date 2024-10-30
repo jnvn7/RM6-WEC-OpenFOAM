@@ -49,35 +49,15 @@ runTimeModifiable yes;
 
 adjustTimeStep  on;
 
-maxCo           0.65;
+maxCo           $maxCo;
 
-maxAlphaCo      0.65;
+maxAlphaCo      $maxCo;
 
 maxDeltaT       $maxDeltaT;
 
 functions
 {
-    interfaceHeight1
-    {
-	// Mandatory entries (unmodifiable)
-        type            interfaceHeight;
-        libs            (fieldFunctionObjects);
-
-	// Mandatory entries (runtime modifiable)
-	locations	(($Probe1 0 -1) 
-			 ($Probe2 0 -1) 
-			 ($Probe3 0 -1)
-			 ($Probe4 0 -1)
-			 ($Probe5 0 -1));
-
-	// Optional entries (runtime modifiable)
-	alpha		alpha.water;
-	liquid		true;
-	direction	(0 0 1);
-        interpolationScheme cellPoint;
-	writeControl    adjustable;
-	writeInterval   $writeElev;
-    }
+    #include "waveProbes";
 }
 
 

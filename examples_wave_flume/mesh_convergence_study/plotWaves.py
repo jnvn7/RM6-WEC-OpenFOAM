@@ -4,6 +4,7 @@ import numpy as np
 import coreFuncs as cF
 import matplotlib.pyplot as plt
 import sys
+import os
 #-------------------------------Adjust some plot settings----------------------------#
 #plt.rcParams['figure.dpi'] = 400
 colors = np.array(
@@ -29,13 +30,13 @@ if (nCases < 1):
 # Extract wave data
 # Default for wavePath is in OpenFOAM <postProcessing>. 
 # Here it is set to pre-packeged data
-wavePath = 'prePackaged_postProcessing/interfaceHeight1/*/height.dat'
+wavePath = 'prePackaged_postProcessing/waveProbes/*/height.dat'
 time = []
 elevSims = []
 H = []
 T = []
 for iCase,case in enumerate(sys.argv[1:]):
-    rf = cF.readFlowParams(case+'flowParams')
+    rf = cF.readFlowParams(os.path.join(case,'flowParams'))
     if (rf['waveType'] == 0):
         iTime, iElevSims, iH, iT = cF.evalWaveData(sys.argv[iCase+1], iProbe=3, nStart=5, nFFT=5, wavePath=wavePath)    
     else:

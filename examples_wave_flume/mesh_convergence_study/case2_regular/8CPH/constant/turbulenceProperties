@@ -15,17 +15,20 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-simulationType  laminar;
-//simulationType  RAS;
+#include "../flowParams";
+
+simulationType  $simType;
+
+// Additional models: kEpsilonMultiphase, kOmegaSSTMultiphase,
+// kOmegaSSTBuoyancy, kOmegaSSTStable.
 
 RAS
 {
-    RASModel        kEpsilon;
+    RASModel        $turbModel;
 
     turbulence      on;
 
     printCoeffs     on;
 }
-
 
 // ************************************************************************* //

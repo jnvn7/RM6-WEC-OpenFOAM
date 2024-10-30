@@ -1,4 +1,4 @@
-# 2D Wave Flume
+# 2D Wave Flume Template
 
 ## Case Description 
 <div align="justify">

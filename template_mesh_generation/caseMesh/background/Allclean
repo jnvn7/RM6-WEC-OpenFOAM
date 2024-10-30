@@ -5,8 +5,12 @@ cd "${0%/*}" || exit                                # Run from this directory
 
 cleanCase0
 
-# Clean residue files
+# Clean residual files
 files=("bgMeshing" "bgRefineBox" "bgRefineBoxLevel" "objBoundingBox")
+
+if [ -f "flowParams" ]; then
+    rm flowParams
+fi
 
 for file in "${files[@]}"
 do

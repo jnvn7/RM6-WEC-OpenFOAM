@@ -28,7 +28,6 @@
 
     simType         RAS;            // laminar or RAS
     turbModel       realizableKE;   // kEpsilon, kOmegaSST, realizableKE, etc.
-    turbIntensity   0.05;           // At Inlet
 
 // Wave Tank Dimensions
 

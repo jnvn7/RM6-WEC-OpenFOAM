@@ -5,7 +5,7 @@ cd "${0%/*}" || exit                                # Run from this directory
 
 cleanCase0
 
-# Clean residue files
+# Clean residual files
 files=("objBoundingBox" "objMeshing")
 
 for file in "${files[@]}"

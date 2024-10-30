@@ -57,17 +57,18 @@
 \*------------------------------------------------------------*/
 
 // Model definition - CAD model should be placed at the top directory
+// Following Bull et al. (2014) for the RM6 properties (Table 7)
 
     objName         rm6.stl;                // CAD model placed in the top directory
-    mass            2024657;                  
-    objCG           (-3.0,0.0,-4.72);       // WEC CG relative to the CAD coordinate system
-    gyRad           (12.53,14.33,14.54);    // Radius of gyration
+    mass            600;                    // Scaled value. Full scale (2024657)  
+    objCG           (0.0.0,0.0,-0.286);     // Scaled value. WEC CG relative to the CAD coordinate system
+    gyRad           (0.8353,0.95533,0.9693); // Scaled value. Radius of gyration
 
     // Optional
     objScale        0.0667;
-    translate       (0.0,0.0,0.0);
+    translate       (0.0,0.0,0.0);      // Scaled value
     rotate          ((0 1 0) 0);        // Axis and rotation angle in degree(s).
-    hinge           (0.0,0.0,0.0);      // Rotational point
+    hinge           (0.0,0.0,0.0);      // Scaled value. Rotational point
     baffleName      turbBaffle.stl
 
 // Grid Control

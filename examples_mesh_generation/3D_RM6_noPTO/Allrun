@@ -1,0 +1,26 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------#
+inputFile='flowParams'
+
+# Create Object  SnappyHexMesh
+(cd caseMesh/object_snappy && ./Allrun && rm $inputFile)
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+# Create background SnappyHexMesh
+(cd caseMesh/background && ./Allrun && rm $inputFile)
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+# Combine Background and Oject Meshes
+(cd caseMesh/finalMesh && ./Allrun)
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+#------------------------------------------------------------------------------#
+

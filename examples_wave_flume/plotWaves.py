@@ -5,7 +5,7 @@ import coreFuncs as cF
 import matplotlib.pyplot as plt
 import sys
 import os
-#-------------------------------Adjust some plot settings----------------------------#
+#---------------------------------Plot settings-----------------------------#
 #plt.rcParams['figure.dpi'] = 400
 colors = np.array(
 ['#4477AA', # blue

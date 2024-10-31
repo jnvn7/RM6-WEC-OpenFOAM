@@ -5,7 +5,7 @@ import coreFuncs as cF
 import matplotlib.pyplot as plt
 import sys
 import os
-#-------------------------------Adjust some plot settings----------------------------#
+#---------------------------------Plot settings-----------------------------#
 #plt.rcParams['figure.dpi'] = 400
 colors = np.array(
 ['#4477AA', # blue
@@ -37,6 +37,7 @@ H = []
 T = []
 for iCase,case in enumerate(sys.argv[1:]):
     rf = cF.readFlowParams(os.path.join(case,'flowParams'))
+
     if (rf['waveType'] == 0):
         iTime, iElevSims, iH, iT = cF.evalWaveData(sys.argv[iCase+1], iProbe=3, nStart=5, nFFT=5, wavePath=wavePath)    
     else:

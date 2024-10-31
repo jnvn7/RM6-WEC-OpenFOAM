@@ -41,7 +41,7 @@
     startTime       0.0;       // or latestTime
 	endTime		    35;	        // Set as 0 to for 20T (regular) and 500T (irregular)
 	writeElev	    0.1;		// second(s)
-	writeVTK	    0.1;		// second(s)
+	writeVTK	    1.0;		// second(s)
 
 // Wave Probe Distance from Tank Inlet
 

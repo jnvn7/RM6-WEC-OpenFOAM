@@ -1,0 +1,33 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------#
+## Clean residual files
+./Allclean
+
+# Copy background mesh
+cp -r ../background/constant/polyMesh constant/
+
+# Merge background mesh with overset part
+runApplication mergeMeshes . ../object_snappy -overwrite
+if [ $? -ne 0 ]; then
+  echo "Run MergeMeshes Failed. Program is stopped!"
+  exit 1
+fi
+
+# Move the grid so  the flume starts at x = 0
+translate=$(checkMesh | grep "Overall domain bounding" | tr -d '()' | awk '{print $5}')
+transformPoints -translate "(- $translate 0 0)"
+
+# Keep a copy of flowParams inside the meshing folder
+cp ../../flowParams constant/polyMesh
+
+# Make VTK
+runApplication foamToVTK -constant
+if [ $? -ne 0 ]; then
+  echo "Run Object foamToVTK Failed. Program is stopped!"
+  exit 1
+fi
+
+#------------------------------------------------------------------------------#
+

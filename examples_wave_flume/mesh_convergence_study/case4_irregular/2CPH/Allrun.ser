@@ -1,32 +1,34 @@
 #!/bin/sh
 cd "${0%/*}" || exit                                # Run from this directory
 . ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Source the tutorial run functions for use here
-#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
 
-# Set up the simulation folder
-if [ -f log.interFoam ] # if the logfile already exists, run the restart sequence (in restart.sh)
-then
-  ./restart.sh
+# Clean the run directory
+./Allclean
+restore0Dir
+
+# Set up start time mode
+startTime=$(grep "startTime" flowParams | tr -d ';' | awk '{print $2}')
+if [ $startTime == "latestTime" ]; then
+    sed -i "/startFrom/s/.*/startFrom\t\tlatestTime;       \/\/ or latestTime/" system/controlDict
 else
-  # Clean the run directory
-  ./Allclean
-  restore0Dir
-
-  # Create the flume's simulation grid
-  runApplication blockMesh
-  if [ $? -ne 0 ]; then
-    exit 1
-  fi
-
-  # Run setFields to set initial conditions
-  runApplication setFields
-  if [ $? -ne 0 ]; then
-    exit 1
-  fi
+    sed -i "/startFrom/s/.*/startFrom\t\tstartTime;       \/\/ or latestTime/" system/controlDict
 fi
 
 # Create a .foam file, to be used for visualization in paraview: 
 touch viz.foam
+
+# Create the flume's simulation grid
+runApplication blockMesh
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+# Run setFields to set initial conditions
+runApplication setFields
+if [ $? -ne 0 ]; then
+  exit 1
+fi
 
 # Start the simulation (in serial)
 runApplication $(getApplication)
@@ -34,4 +36,4 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#

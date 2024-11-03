@@ -18,7 +18,6 @@
 	sim3D		    0;		    // 0: 2D. 1: 3D
 	waterDepth	    4.0;		//
 
-    waveEngine      0;
     waveType        0;		    // 0: regular. 1: irregular
     waveModel       StokesII;	// For irregular wave, follow format above.
     waveHeight      0.12;
@@ -38,7 +37,7 @@
 
 // Time Control
 	
-    startTime       0.0;       // or latestTime
+    startTime       0.0;        // or latestTime
 	endTime		    35;	        // Set as 0 to for 20T (regular) and 500T (irregular)
 	writeElev	    0.1;		// second(s)
 	writeVTK	    1.0;		// second(s)

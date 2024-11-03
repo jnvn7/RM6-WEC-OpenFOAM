@@ -19,7 +19,7 @@ FoamFile
 
 application     interFoam;
 
-startFrom		startTime;       // startTime or latestTime
+startFrom		startTime;
 
 startTime       $startTime;
 

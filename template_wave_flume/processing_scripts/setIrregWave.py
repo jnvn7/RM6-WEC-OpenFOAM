@@ -15,7 +15,6 @@ rf = cF.readFlowParams('../flowParams')
 if (rf["waveType"] == 1 and rf["waveModel"] != 'userInput'):
 
     waterDepth = rf['waterDepth']
-    waveEngine = rf['waveEngine']
     waveHeight = rf['waveHeight']
     wavePeriod = rf['wavePeriod']
     tmax = rf['endTime']

@@ -18,7 +18,6 @@
 	sim3D		    0;		    // 0: 2D. 1: 3D
 	waterDepth	    4.0;		//
 
-    waveEngine      0;
     waveType        0;		    // 0: regular. 1: irregular
     waveModel       StokesII;	// For irregular wave, follow format above.
     waveHeight      0.5;       

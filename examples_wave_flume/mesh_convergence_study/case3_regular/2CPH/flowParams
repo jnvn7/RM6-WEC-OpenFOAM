@@ -18,7 +18,6 @@
 	sim3D		    0;		    // 0: 2D. 1: 3D
 	waterDepth	    4.0;		//
 
-    waveEngine      0;
     waveType        0;		    // 0: regular. 1: irregular
     waveModel       StokesII;	// For irregular wave, follow format above.
     waveHeight      0.5;       
@@ -57,8 +56,8 @@
 
 // Grid Control
 
-	xContr          500;                // Cells per wave length. Cell size = min(dx,dz)
-	zContr          8;		            // Cells per wave height
+	xContr          125;                // Cells per wave length. Cell size = min(dx,dz)
+	zContr          2;		            // Cells per wave height
 	hContr		    3.0;                // Height of refinement zone over waveHeight
     zExpContr       1.5;                // Cell expansion rate outside the refinement zone
 

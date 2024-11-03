@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-#---------------------------------------------------------------------------#
+##--------------------------------------------------------------------------------#
+# Script to plot wave data from OF postProcessing folder
+# Usage: python plotWaves.py OF_case_directories (single or multiple cases)
+##--------------------------------------------------------------------------------#
 import numpy as np
 import coreFuncs as cF
 import matplotlib.pyplot as plt
@@ -20,17 +23,23 @@ colors = np.array(
 # colormap from: https://personal.sron.nl/~pault/
 plt.rcParams['axes.prop_cycle'] = plt.cycler(color=colors)
 
-#---------------------------------Plot wave data----------------------------#
+#---------------------------------User inputs----------------------------#
 # Read inputs
 nCases = len(sys.argv)-1
 if (nCases < 1):
-    print('Missing case input(s) for plotting!')
+    print('\nMissing case input(s) for plotting!')
+    print('\nUsage: \n \t python plotWaves.py OF_case_directories\n')
     sys.exit()
 
-# Extract wave data
-# Default for wavePath is in OpenFOAM <postProcessing>. 
+# Extract wave data. Default for wavePath is in OpenFOAM <postProcessing>. 
 # Here it is set to pre-packeged data
 wavePath = 'prePackaged_postProcessing/waveProbes/*/height.dat'
+iProbe = 3          # Set the probe number to plot. 
+nStart = 5          # Number of wave cycles to remove initial transient effects.
+nFFT_reg = 5        # Number of regular wave cycles for FFT analysis.
+nFFT_irreg = 160    # Number of irregular wave cycles for FFT analysis.
+
+#---------------------------------Plot wave data----------------------------#
 time = []
 elevSims = []
 H = []
@@ -39,9 +48,9 @@ for iCase,case in enumerate(sys.argv[1:]):
     rf = cF.readFlowParams(os.path.join(case,'flowParams'))
 
     if (rf['waveType'] == 0):
-        iTime, iElevSims, iH, iT = cF.evalWaveData(sys.argv[iCase+1], iProbe=3, nStart=5, nFFT=5, wavePath=wavePath)    
+        iTime, iElevSims, iH, iT = cF.evalWaveData(sys.argv[iCase+1], iProbe=iProbe, nStart=nStart, nFFT=nFFT_reg, wavePath=wavePath)    
     else:
-        iTime, iElevSims, iH, iT = cF.evalWaveData(sys.argv[iCase+1], iProbe=3, nStart=5, nFFT=160, wavePath=wavePath)    
+        iTime, iElevSims, iH, iT = cF.evalWaveData(sys.argv[iCase+1], iProbe=iProbe, nStart=nStart, nFFT=nFFT_irreg, wavePath=wavePath)    
     time.append(iTime)
     elevSims.append(iElevSims)
     H.append(iH)

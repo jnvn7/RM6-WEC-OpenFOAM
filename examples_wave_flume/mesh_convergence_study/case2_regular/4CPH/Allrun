@@ -2,27 +2,53 @@
 cd "${0%/*}" || exit                                # Run from this directory
 . ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Source the tutorial run functions for use here
 #------------------------------------------------------------------------------#
-
+# Prepare the simulation case
 # Clean the run directory
 ./Allclean
-restore0Dir
+
+# Check required inputs
+file='flowParams'
+params=("sim3D" "waterDepth" "waveType" "waveModel" "wavePeriod" "waveHeight" \
+        "waveAngle" "wavePhase" "simType" "turbModel" "tankLength" "tankHeight" \
+        "tankWidth" "lengthContr" "startTime" "endTime" "writeElev" "writeVTK" "Probe1" \
+        "Probe2" "Probe3" "Probe4" "Probe5" "xContr" "zContr" "hContr" "zExpContr" \
+        "maxCo" "maxDeltaT")
+
+err=0
+for param in "${params[@]}"
+do
+    p=$(awk '{print $1}' $file | grep $param)
+    if [ -z "$p" ]; then
+        echo "Missing parameter: $param in flowParams"
+        err=1
+    fi
+done
+
+if [ $err -eq 1 ]; then
+    exit 1
+fi
 
 # Set up start time mode
 startTime=$(grep "startTime" flowParams | tr -d ';' | awk '{print $2}')
 if [ $startTime == "latestTime" ]; then
-    sed -i "/startFrom/s/.*/startFrom\t\tlatestTime;       \/\/ or latestTime/" system/controlDict
+    sed -i "/startFrom/s/.*/startFrom\t\tlatestTime;/" system/controlDict
 else
-    sed -i "/startFrom/s/.*/startFrom\t\tstartTime;       \/\/ or latestTime/" system/controlDict
+    sed -i "/startFrom/s/.*/startFrom\t\tstartTime;/" system/controlDict
 fi
+
+# Create a .foam file, to be used for visualization in paraview:
+touch viz.foam
+
+#------------------------------------------------------------------------------#
+# Run grid generation and start the simulation
+# Restore polyMesh and 0 folder
+restore0Dir
 
 # Create the flume's simulation grid
 runApplication blockMesh
 if [ $? -ne 0 ]; then
   exit 1
 fi
-
-# Create a .foam file, to be used for visualization in paraview: 
-touch viz.foam
 
 # Decompose the case for parallel run
 runApplication decomposePar

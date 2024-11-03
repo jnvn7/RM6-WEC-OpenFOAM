@@ -7,38 +7,16 @@ import glob
 from scipy import signal
 from scipy.integrate import simps
 #--------------------------------Read in Parameters---------------------------#
-# Constants and directory setup
+# Constants
 g = 9.81
-waveDataPath = '/postProcessing/interfaceHeight1/*/height.dat'
-flowParams = 'flowParams'
-objMeshingLoc = 'constant/objMeshing'       # For mesh gen object_snappy Folder
-bgMeshingLoc = 'constant/bgMeshing'              # For mesh gen background Folder
-bgRefineLoc = 'constant/bgRefineBox'             # For mesh gen background Folder
-bgRefineLevelLoc = 'constant/bgRefineBoxLevel'   # For mesh gen background Folder
 
 #--------------------------------Read in Parameters---------------------------#
-# Get Bounding Box for Object Geometry
-def readBoundingBox():
-    ufFile = "constant/objBoundingBox"
-    ufData = pd.read_csv(ufFile, sep="\s+|\t", header=None, skiprows=0,
-                                                nrows=1, engine="python")
-
-    boundingBox = np.zeros(6)
-    boundingBox[0] = float(ufData[3][0])
-    boundingBox[1] = float(ufData[4][0])
-    boundingBox[2] = float(ufData[5][0])
-    boundingBox[3] = float(ufData[6][0])
-    boundingBox[4] = float(ufData[7][0])
-    boundingBox[5] = float(ufData[8][0])
-
-    return boundingBox
-
-# Read flowParams parameters
+# Read flowParams - wave and simulation parameters
 def readFlowParams(flowParamsFile):
     ufData = pd.read_csv(flowParamsFile, sep="\s+|\t", header=None, skiprows = 11,
                             names = range(1000), engine="python")
 
-    rOut = {'sim3D':[],'waveEngine':[],'waveType':[],'Uin':0.0,'waterDepth':[],
+    rOut = {'sim3D':[],'waveType':[],'waveEngine':0,'Uin':0.0,'waterDepth':[],
 		    'waveHeight':[],'wavePeriod':[],'waveAngle':0.0,'wavePhase':0.0,
             'endTime':[],'writeElev':0.01,'writeVTK':1.0,'Probe1':0.0,
             'Probe2':0.0,'Probe3':0.0,'Probe4':0.0,'Probe5':0.0,'dtContr':1.0,
@@ -71,6 +49,8 @@ def readFlowParams(flowParamsFile):
 
     return rOut
 
+#---------------------------------------------------#
+# Read flowParams - grid construction parameters
 def readFlowParamMeshing(flowParamsFile):
     ufData = pd.read_csv(flowParamsFile, sep="\s+|\t", header=None, skiprows = 11,
                             names = range(1000), engine="python")
@@ -78,7 +58,7 @@ def readFlowParamMeshing(flowParamsFile):
     rOut = {'sim3D':1,'nLayerOverlap':10,'nRefineZones':4,'waterDepth':[],'waveHeight':[],'wavePeriod':[],
                 'tankLength':0.0,'tankHeight':0.0,'tankWidth':0.0,'objScale':1.0,
                 'zoneHeightRatio':0.2,'zoneWidthRatio':0.2,'xContr':10.0,'zContr':10.0,
-                'hContr':2.0,'lengthContr':5.0,'translate':'(0.0,0.0,0.0)',
+                'hContr':2.0,'lengthContr':5.0,'translate':[],
                 'objCG':[],'objName':[],'baffleName':'none'}
 
     varNames = list(rOut.keys())
@@ -104,8 +84,24 @@ def readFlowParamMeshing(flowParamsFile):
 
     return rOut
 
+# Get Bounding Box for Object Geometry
+def readBoundingBox():
+    ufFile = "constant/objBoundingBox"
+    ufData = pd.read_csv(ufFile, sep="\s+|\t", header=None, skiprows=0,
+                                                nrows=1, engine="python")
+
+    boundingBox = np.zeros(6)
+    boundingBox[0] = float(ufData[3][0])
+    boundingBox[1] = float(ufData[4][0])
+    boundingBox[2] = float(ufData[5][0])
+    boundingBox[3] = float(ufData[6][0])
+    boundingBox[4] = float(ufData[7][0])
+    boundingBox[5] = float(ufData[8][0])
+
+    return boundingBox
+
 #--------------------------Get wave prob data---------------------------#
-def importWaveData(case, wavePath=waveDataPath):
+def importWaveData(case, wavePath='/postProcessing/interfaceHeight1/*/height.dat'):
     eleFile = sorted(glob.glob(case+wavePath))
 
     if (len(eleFile)==0):
@@ -129,13 +125,14 @@ def importWaveData(case, wavePath=waveDataPath):
 
     return (nProbes, time, eleSims)
 
-def evalWaveData(case, wavePath=waveDataPath, iProbe=3, nStart=8, nFFT=5):
+def evalWaveData(case, wavePath='/postProcessing/interfaceHeight1/*/height.dat', 
+                        iProbe=3, nStart=8, nFFT=5):
     # Read In Flow Settings
     g = 9.81
     iProbe -= 1
 
     # Read flowParams file and set constant
-    rf = readFlowParams(case+'/flowParams')
+    rf = readFlowParams(os.path.join(case,'/flowParams'))
 
     # Get wave data from '<postProcessing> dir'
     [nProbes, time, elevSims] = importWaveData(case, wavePath)

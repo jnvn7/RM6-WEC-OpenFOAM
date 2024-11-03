@@ -2,14 +2,19 @@
 import sys
 import numpy as np
 import coreFuncs as cF
-
 #-----------------------------------Constant Definition----------------------------#
+# Constants and directory setup
 g = 9.81
 tankWidth2D = 0.01
+flowParams = 'flowParams'
+objMeshingLoc = 'constant/objMeshing'       # For mesh gen object_snappy Folder
+bgMeshingLoc = 'constant/bgMeshing'              # For mesh gen background Folder
+bgRefineLoc = 'constant/bgRefineBox'             # For mesh gen background Folder
+bgRefineLevelLoc = 'constant/bgRefineBoxLevel'   # For mesh gen background Folder
 
 #---------------------------------Read In Flow Settings----------------------------#
 # Read flowParams file
-rOut = cF.readFlowParamMeshing(cF.flowParams)
+rOut = cF.readFlowParamMeshing(flowParams)
 
 ##-----------------------------Unpack flowParams Properties------------------------#
 # Find the Object Bounding Box
@@ -109,7 +114,7 @@ locationInMesh = ('('+locMeshX+' '+locMeshY+' '+locMeshZ+')')
 
 # Writing Object Snappy Setup
 if (len(sys.argv)>1 and sys.argv[1] == '-o'):
-    with open(cF.objMeshingLoc,'w') as fout:        
+    with open(objMeshingLoc,'w') as fout:        
         fout.write('//Object Dimensions and Mesh sizings:\n')
         fout.write('objName\t'+objName+';\n')
         fout.write('objEMesh\t'+objName.split('.')[0]+'.eMesh;\n')
@@ -178,7 +183,7 @@ if (len(sys.argv)>1 and sys.argv[1] == '-b'):
     Zwp = zc + hWaveZone/2
 
     # Writing Wave Flume Setup
-    with open(cF.bgMeshingLoc,'w') as fout:
+    with open(bgMeshingLoc,'w') as fout:
         fout.write('//Background Dimensions and Mesh sizings:\n')
         fout.write('Xtn\t'+str(Xtn)+';\n')
         fout.write('Ytn\t'+str(Ytn)+';\n')   ###
@@ -245,7 +250,7 @@ if (len(sys.argv)>1 and sys.argv[1] == '-b'):
 
     # Background Mesh Refinement 
         refineLevel = 1
-        with open(cF.bgRefineLoc,'w') as fout:
+        with open(bgRefineLoc,'w') as fout:
             if (nRefineZones > 0):
                 for i in range(zone,0,-1):
                     fout.write('refinementBox'+str(zone-i)+'\n')
@@ -262,7 +267,7 @@ if (len(sys.argv)>1 and sys.argv[1] == '-b'):
                     fout.write('\tmax\t('+str(Xwp)+' '+str(Ywp)+' '+str(ZwpRef[i-1])+');\n')
                     fout.write('}\n\n')
 
-        with open(cF.bgRefineLevelLoc,'w') as fout:
+        with open(bgRefineLevelLoc,'w') as fout:
             if (nRefineZones > 0):
                 for i in range(zone,0,-1):
                     fout.write('refinementBox'+str(zone-i)+'\n')

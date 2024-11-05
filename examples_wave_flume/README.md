@@ -3,11 +3,13 @@
 <div align="justify">
 
 ## Overview 
-This directory houses a templated example for 2D wave flume simulations, along with four specific example cases based upon the template. 
+This directory houses four specific example cases based upon the template case illustrated in <tt>template_wave_flume</tt>, as well as an example mesh convergence study performed for each of the cases. 
 
-It is recommended that the interested user start with the <tt>README</tt> file in the template case directory <tt>template_waveFlume</tt>, which contains instructions on how to run a case, as well as documentation on the simulation setup, <tt>OpenFOAM</tt> dictionary files and file structure, and post-processing.  
+It is recommended that the interested user start with the <tt>README</tt> file in the template case directory <tt>template_wave_flume</tt>, which contains instructions on how to run a case, as well as documentation on the simulation setup, <tt>OpenFOAM</tt> dictionary files and file structure, and post-processing.  
 
 The four example cases are each built by making modifications to the template case, and are ready to be run "as-is". They are described in more detail below in [Example cases](#example-cases). 
+
+For each example case, there are two directories, one labeled with the example name alone, and one marked as "pre-packaged", i.e. <tt>case1_regular</tt> and <tt>case1_regular_prepackaged</tt>. The "pre-packaged" folders contain pre-generated wave probe data for each case from a successful <tt>OpenFOAM</tt> simulation, and are provided so that the interested user can compare their own simulation results with the pre-packaged data as a sanity check for their own results. For more information on comparing with this data, see [Comparing with pre-packaged wave probe data](#comparing-with-pre-packaged-wave-probe-data-for-example-cases). 
 
 
 ## Example cases 
@@ -38,7 +40,24 @@ It is noted that all simulation demonstration cases developed in this project ar
 
 [1]	Dunkle, G., Robertson, B., García-Medina, G., & Yang, Z. (2020). Pacwave wave resource assessment.
 
-### Pre-packaged wave probe data for example cases
+### Provided python scripts
+Several python scripts are provided for plotting and analysis of simulation results -- <tt>plotWaves.py</tt>, which the user can call directly to plot simulation results, and <tt>coreFuncs.py</tt>, which provides auxiliary functionalities needed in <tt>plotWaves.py</tt> (i.e. analytical solutions for various wave models, calculating wave height and period from a provided signal, etc.). 
+
+<tt>plotWaves.py</tt> can be used to plot the wave probe data generated during a simulation, which is stored within the case folder in <tt>postProcessing</tt>. The script can additionally be used to compare the results from multiple simulations against one another.
+
+__To use this script for a single simulation__, call the script with the name of the simulation directory as the function input. i.e., running 
+```
+python plotWaves.py case1_regular_prepackaged
+```
+should display the plot
+
+
+
+
+
+
+
+### Comparing with pre-packaged wave probe data for example cases
 For each example case, pre-packaged wave probe data is provided as a "sanity check" for the user to compare with their own simulated data. This data is housed in the <tt>prePackaged-postProcessing</tt> directory of each example case. If the case has run correctly, the user-generated wave probe data in <tt>postProcessing</tt> should match the data in <tt>prePackaged-postProcessing</tt>. 
 
 To check if this is the case, the user can use the provided python script <tt>plotWavesCompare.py</tt> in the <tt>processing_scripts</tt> directory. Running this script will plot the pre-packaged data against the user-generated data for each wave probe in the simulation. Example output of this script should look like Figure 1 below. 
@@ -47,3 +66,5 @@ To check if this is the case, the user can use the provided python script <tt>pl
   <img src="https://github.com/jnvn7/RM6-WEC-OpenFoam/blob/main/images/case1-prepack-vs-usergen-example-figure.png" width="400"/>
 </p>
 <p align='middle'> Figure 1 - Example output of the <tt>plotWavesCompare.py</tt> python script, plotting the user-generated wave probe data vs. the pre-packaged wave probe data for each probe. </p>
+
+### Mesh resolution study

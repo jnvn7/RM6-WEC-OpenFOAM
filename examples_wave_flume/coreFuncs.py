@@ -132,7 +132,7 @@ def evalWaveData(case, wavePath='/postProcessing/interfaceHeight1/*/height.dat',
     iProbe -= 1
 
     # Read flowParams file and set constant
-    rf = readFlowParams(os.path.join(case,'/flowParams'))
+    rf = readFlowParams(os.path.join(case,'flowParams'))
 
     # Get wave data from '<postProcessing> dir'
     [nProbes, time, elevSims] = importWaveData(case, wavePath)

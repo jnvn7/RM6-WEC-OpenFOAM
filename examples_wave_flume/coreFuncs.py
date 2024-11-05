@@ -101,8 +101,8 @@ def readBoundingBox():
     return boundingBox
 
 #--------------------------Get wave prob data---------------------------#
-def importWaveData(case, wavePath='/postProcessing/interfaceHeight1/*/height.dat'):
-    eleFile = sorted(glob.glob(case+wavePath))
+def importWaveData(case, wavePath="/postProcessing/waveProbes/*/height.dat"):
+    eleFile = sorted(glob.glob(os.path.join(case,wavePath)))
 
     if (len(eleFile)==0):
         print('No elevation data found. Check wavePath input!')
@@ -125,14 +125,14 @@ def importWaveData(case, wavePath='/postProcessing/interfaceHeight1/*/height.dat
 
     return (nProbes, time, eleSims)
 
-def evalWaveData(case, wavePath='/postProcessing/interfaceHeight1/*/height.dat', 
+def evalWaveData(case, wavePath="/postProcessing/waveProbes/*/height.dat", 
                         iProbe=3, nStart=8, nFFT=5):
     # Read In Flow Settings
     g = 9.81
     iProbe -= 1
 
     # Read flowParams file and set constant
-    rf = readFlowParams(os.path.join(case,'flowParams'))
+    rf = readFlowParams(os.path.join(case,"flowParams"))
 
     # Get wave data from '<postProcessing> dir'
     [nProbes, time, elevSims] = importWaveData(case, wavePath)

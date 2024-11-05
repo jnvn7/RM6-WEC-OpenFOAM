@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import sys
 import os
 #---------------------------------Plot settings-----------------------------#
-plt.rcParams['figure.dpi'] = 400
+#plt.rcParams['figure.dpi'] = 400
 colors = np.array(
 ['#4477AA', # blue
   '#66CCEE', # cyan
@@ -32,7 +32,8 @@ if (nCases < 1):
     sys.exit()
 
 # Extract wave data. Default for wavePath is in OpenFOAM <postProcessing>. 
-wavePath = 'postProcessing/waveProbes/*/height.dat'
+# Here it is set to pre-packeged data
+wavePath = "prePackaged_postProcessing/waveProbes/*/height.dat"
 iProbe = 3          # Set the probe number to plot. 
 nStart = 5          # Number of wave cycles to remove initial transient effects.
 nFFT_reg = 5        # Number of regular wave cycles for FFT analysis.
@@ -44,7 +45,7 @@ elevSims = []
 H = []
 T = []
 for iCase,case in enumerate(sys.argv[1:]):
-    rf = cF.readFlowParams(os.path.join(case,'flowParams'))
+    rf = cF.readFlowParams(os.path.join(case,"flowParams"))
 
     if (rf['waveType'] == 0):
         iTime, iElevSims, iH, iT = cF.evalWaveData(sys.argv[iCase+1], iProbe=iProbe, nStart=nStart, nFFT=nFFT_reg, wavePath=wavePath)    

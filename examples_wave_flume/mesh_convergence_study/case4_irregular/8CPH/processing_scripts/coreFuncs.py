@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
 import sys
+import os
 import numpy as np
 import pandas as pd
 import glob
-
+from scipy import signal
+from scipy.integrate import simps
 #--------------------------------Read in Parameters---------------------------#
 # Constants
 g = 9.81
 
-# Read flowParams parameters
+#--------------------------------Read in Parameters---------------------------#
+# Read flowParams - wave and simulation parameters
 def readFlowParams(flowParamsFile):
     ufData = pd.read_csv(flowParamsFile, sep="\s+|\t", header=None, skiprows = 11,
                             names = range(1000), engine="python")
 
-    rOut = {'sim3D':[],'waveEngine':[],'waveType':[],'Uin':0.0,'waterDepth':[],
+    rOut = {'sim3D':[],'waveType':[],'waveEngine':0,'Uin':0.0,'waterDepth':[],
 		    'waveHeight':[],'wavePeriod':[],'waveAngle':0.0,'wavePhase':0.0,
             'endTime':[],'writeElev':0.01,'writeVTK':1.0,'Probe1':0.0,
             'Probe2':0.0,'Probe3':0.0,'Probe4':0.0,'Probe5':0.0,'dtContr':1.0,
@@ -46,9 +49,64 @@ def readFlowParams(flowParamsFile):
 
     return rOut
 
+#---------------------------------------------------#
+# Read flowParams - grid construction parameters
+def readFlowParamMeshing(flowParamsFile):
+    ufData = pd.read_csv(flowParamsFile, sep="\s+|\t", header=None, skiprows = 11,
+                            names = range(1000), engine="python")
+
+    rOut = {'sim3D':1,'nLayerOverlap':10,'nRefineZones':4,'waterDepth':[],'waveHeight':[],'wavePeriod':[],
+                'tankLength':0.0,'tankHeight':0.0,'tankWidth':0.0,'objScale':1.0,
+                'zoneHeightRatio':0.2,'zoneWidthRatio':0.2,'xContr':10.0,'zContr':10.0,
+                'hContr':2.0,'lengthContr':5.0,'translate':[],
+                'objCG':[],'objName':[],'baffleName':'none'}
+
+    varNames = list(rOut.keys())
+    varList = ufData[:][0]
+    varValues = ufData[:][1]
+
+    for i in range(len(varNames)):
+        for j in range(len(varValues)):
+            if (str(varList[j]) == varNames[i]):
+                if (i < 3):
+                    rOut[varNames[i]] = int(varValues[j].replace(';',''))
+                elif (i >= 3 and i < 16):
+                    rOut[varNames[i]] = float(varValues[j].replace(';',''))
+                else:
+                    rOut[varNames[i]] = varValues[j].replace(';','')
+                break
+
+    # Check input parameters
+    for i in range(len(varNames)):
+        if (rOut[varNames[i]] == []):
+            print('\nMissing input for parameter(s): ' + varNames[i])
+            errCodes(13)
+
+    return rOut
+
+# Get Bounding Box for Object Geometry
+def readBoundingBox():
+    ufFile = "constant/objBoundingBox"
+    ufData = pd.read_csv(ufFile, sep="\s+|\t", header=None, skiprows=0,
+                                                nrows=1, engine="python")
+
+    boundingBox = np.zeros(6)
+    boundingBox[0] = float(ufData[3][0])
+    boundingBox[1] = float(ufData[4][0])
+    boundingBox[2] = float(ufData[5][0])
+    boundingBox[3] = float(ufData[6][0])
+    boundingBox[4] = float(ufData[7][0])
+    boundingBox[5] = float(ufData[8][0])
+
+    return boundingBox
+
 #--------------------------Get wave prob data---------------------------#
-def importElevData(waveDataDir):
-    eleFile = sorted(glob.glob(waveDataDir))
+def importWaveData(case, wavePath="/postProcessing/waveProbes/*/height.dat"):
+    eleFile = sorted(glob.glob(os.path.join(case,wavePath)))
+
+    if (len(eleFile)==0):
+        print('No elevation data found. Check wavePath input!')
+        sys.exit()
 
     data = pd.read_csv(eleFile[0], sep="\s+|\t", header=None, engine="python")
     nProbes = int((len(data.columns)-1)/2)
@@ -67,6 +125,40 @@ def importElevData(waveDataDir):
 
     return (nProbes, time, eleSims)
 
+def evalWaveData(case, wavePath="/postProcessing/waveProbes/*/height.dat", 
+                        iProbe=3, nStart=8, nFFT=5):
+    # Read In Flow Settings
+    g = 9.81
+    iProbe -= 1
+
+    # Read flowParams file and set constant
+    rf = readFlowParams(os.path.join(case,"flowParams"))
+
+    # Get wave data from '<postProcessing> dir'
+    [nProbes, time, elevSims] = importWaveData(case, wavePath)
+    Fs = 1/(time[1] - time[0])
+
+    # Set the time inverval used for FFT of the simulated waves.
+    # Used to remove the transient data at the start and the data
+    # impacted by wave reflection at the end
+    tStart = int(nStart*rf["wavePeriod"]*Fs)             # Remove the initial nStart cycles
+    tEnd = int(tStart + nFFT*rf["wavePeriod"]*Fs)        # Take the next nFFT cycles to do FFT
+
+    # Plot the results and estimate the simulated wave height and period
+    if (rf["waveType"] == 0):
+        elev = elevSims[iProbe][tStart:tEnd]
+        [Freqs, elevFFT] = fftSignal(Fs, elev)
+
+        H = 2*np.max(abs(elevFFT))
+        T = 1/(Freqs[abs(elevFFT).argmax()])
+    else:
+        elev = elevSims[iProbe][tStart:tEnd]
+        fOut = calcPSD_Hs(Fs, elev, len(elev))
+        T = 1/fOut[2]
+        H = fOut[3]
+
+    return time, elevSims[iProbe], H, T
+
 #--------------------------Wave Functions---------------------------#
 # FFT signal function
 def fftSignal(Fs, signal):
@@ -78,23 +170,27 @@ def fftSignal(Fs, signal):
     return (Freqs, signalFFT)
 
 # Wave Dispersion Calculation using Newton Raphson
-def waveNumber(g, omega, d):
-    k0 = 1;
-    err = 1;
-    count = 0;
-    while (err >= 10e-8 and count <= 100):
-        f0 = omega*omega - g*k0*np.tanh(k0*d)
-        fp0 = -g*np.tanh(k0*d)-g*k0*d*(1-np.tanh(k0*d)*np.tanh(k0*d))
-        k1 = k0 - f0/fp0
-        err = abs(k1-k0)
-        k0 = k1
-        count += 1
-
-    if (count >= 100):
-        print('Can\'t find solution for dispersion equation!')
-        exit()
+def waveNumber(g, omega, d, deepWater=False):
+    if (deepWater):
+        period = 2*np.pi/omega
+        k0 = 4*np.pi**2/g/period/period
     else:
-        return(k0)
+        k0 = 1;
+        err = 1;
+        count = 0;
+        while (err >= 10e-8 and count <= 100):
+            f0 = omega*omega - g*k0*np.tanh(k0*d)
+            fp0 = -g*np.tanh(k0*d)-g*k0*d*(1-np.tanh(k0*d)*np.tanh(k0*d))
+            k1 = k0 - f0/fp0
+            err = abs(k1-k0)
+            k0 = k1
+            count += 1
+
+        if (count >= 100):
+            print('Can\'t find solution for dispersion equation!')
+            sys.exit()
+
+    return(k0)
 
 # Wave Spectrums
 def wave_components(f,S, time, seed=123, frequency_bins=None,phases=None):
@@ -261,7 +357,9 @@ def calcPSD_Hs(Fs, eta, nfft):
     [f, PSD] = signal.welch(eta, Fs, window='hann', nperseg=nfft, nfft=nfft, 
                                                         noverlap=None)
     Hs = 4*np.sqrt(simps(PSD, dx = f[2]-f[1]))
-    return [f, PSD, Hs]
+    fMax = f[PSD.argmax()]
+
+    return [f, PSD, fMax, Hs]
 
 #------------------------------Write Data to File-----------------------------#
 def writeSpec(fout, waveEngine, f, amps, phases, waveK):

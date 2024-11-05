@@ -1,0 +1,68 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "../system/caseSetup_overset"
+
+motionSolverLibs    (sixDoFRigidBodyMotion);
+
+dynamicFvMesh       dynamicOversetFvMesh;
+
+solver        sixDoFRigidBodyMotion;
+
+sixDoFRigidBodyMotionCoeffs
+{
+    // See <system>/caseSetup_overset for WEC properties evaluation
+    // e.g. CG, mass, moment of inertia
+    mass            $mass;
+    centreOfMass    $objCGV_gl; 
+    momentOfInertia ( $Mx $My $Mz);
+
+    // Solver settings
+	patches         (object);
+	innerDistance   999.0;
+	outerDistance   999.1;
+
+    accelerationRelaxation 0.3;
+    accelerationDamping 0.9;
+
+	report          on;             
+
+	solver
+    	{
+        	type Newmark;
+    	}
+
+    // Restraints
+    restraints
+    {
+    }
+
+    // Constraints
+	constraints
+	{
+        motionInXZPlaneOnly
+        {
+                sixDoFRigidBodyMotionConstraint   plane;
+                normal                            (0 1 0);
+        }
+
+        fixedRollYaw
+        {
+                sixDoFRigidBodyMotionConstraint   axis;
+                axis                              (0 1 0);
+        }
+	}
+}

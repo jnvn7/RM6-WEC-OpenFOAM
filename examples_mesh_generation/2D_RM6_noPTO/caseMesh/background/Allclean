@@ -8,6 +8,10 @@ cleanCase0
 # Clean residual files
 files=("bgMeshing" "bgRefineBox" "bgRefineBoxLevel" "objBoundingBox")
 
+if [ -f "flowParams" ]; then
+    rm flowParams
+fi
+
 for file in "${files[@]}"
 do
     if [ -f 'constant/'$file ]; then

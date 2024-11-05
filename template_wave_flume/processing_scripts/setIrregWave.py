@@ -9,16 +9,16 @@ tCoeff = 500       # Multiplier of wave period for maximum simulated time (irreg
 waveInput = '../constant/waveInput.txt'
 
 # Read flowParams file and set constant
-rf = cF.readFlowParams('../flowParams')
+rf = cF.readFlowParams("../flowParams")
 
 # Wave Parameters
 if (rf["waveType"] == 1 and rf["waveModel"] != 'userInput'):
 
-    waterDepth = rf['waterDepth']
-    waveHeight = rf['waveHeight']
-    wavePeriod = rf['wavePeriod']
-    tmax = rf['endTime']
-    samplingT = rf['writeElev']
+    waterDepth = rf["waterDepth"]
+    waveHeight = rf["waveHeight"]
+    wavePeriod = rf["wavePeriod"]
+    tmax = rf["endTime"]
+    samplingT = rf["writeElev"]
 
     if (tmax == 0):
         tmax = tCoeff*wavePeriod
@@ -34,7 +34,7 @@ if (rf["waveType"] == 1 and rf["waveModel"] != 'userInput'):
     f = np.linspace(fmin, fmax, nf)
 
     if (waveModel != 'PM' and waveModel != 'Bretschneider' and waveModel != 'Jonswap'):
-        print(rf['waveModel'])
+        print(rf["waveModel"])
         cF.errCodes(5)
 
     # Write wave components to the '<constant>/waveInput.txt' file

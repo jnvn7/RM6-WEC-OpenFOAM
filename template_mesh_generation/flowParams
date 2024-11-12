@@ -67,7 +67,7 @@
     objScale        0.0667;
     rotate          ((0 1 0) 0);        // Axis and rotation angle in degree(s).
     hinge           (0.0,0.0,0.0);      // Scaled value. Rotational point
-    baffleName      turbBaffle.stl
+    baffleName      turbBaffle.stl;
 
 // Grid Control
 

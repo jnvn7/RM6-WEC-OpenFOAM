@@ -1,0 +1,96 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "../system/caseSetup_overset"
+
+motionSolverLibs    (sixDoFRigidBodyMotion);
+
+dynamicFvMesh       dynamicOversetFvMesh;
+
+solver        sixDoFRigidBodyMotion;
+
+sixDoFRigidBodyMotionCoeffs
+{
+    // See <system>/caseSetup_overset for WEC properties evaluation
+    // e.g. CG, mass, moment of inertia
+    mass            $mass;
+    centreOfMass    $objCGV_gl; 
+    momentOfInertia ( $Mx $My $Mz);
+
+    // Solver settings
+	patches         (object);
+	innerDistance   999.0;
+	outerDistance   999.1;
+
+    accelerationRelaxation 0.3;
+    accelerationDamping 0.9;
+
+	report          on;             
+
+	solver
+    	{
+        	type Newmark;
+    	}
+
+    // Restraints
+    restraints
+    {
+            // Following Bull et al. (2014) for the RM6 mooring properties
+            // However, line stiffness is simplified and adjusted for 2D simulation.
+            portSpring
+            {
+                sixDoFRigidBodyMotionRestraint linearSpring;
+                refAttachmentPt   ( #eval{ -0.5833 + $tankShiftX}  -0.8833 -0.5833 );
+                anchor            ( #eval{-47.0267 + $tankShiftX} -26.7587 -3.9733 );
+                stiffness         42.5;
+                damping           0;
+                restLength        52.86;
+            }
+            starboardSpring
+            {
+                sixDoFRigidBodyMotionRestraint linearSpring;
+                refAttachmentPt   ( #eval{ -0.5833 + $tankShiftX}  0.8833 -0.5833 );
+                anchor            ( #eval{-47.0267 + $tankShiftX} 26.7587 -3.9733 );
+                stiffness         42.5;
+                damping           0;
+                restLength        52.86;
+            }
+            sternSpring
+            {
+                sixDoFRigidBodyMotionRestraint linearSpring;
+                refAttachmentPt   ( #eval{ 1.75 + $tankShiftX} 0.0 -0.5833 );
+                anchor            ( #eval{13.3333 + $tankShiftX} 0.0 -3.9733 );
+                stiffness         42.5;
+                damping           0;
+                restLength        11.92;
+            }
+    }
+
+    // Constraints
+	constraints
+	{
+            motionInXZPlaneOnly
+            {
+                    sixDoFRigidBodyMotionConstraint   plane;
+                    normal                            (0 1 0);
+            }
+            fixedRollYaw
+            {
+                    sixDoFRigidBodyMotionConstraint   axis;
+                    axis                              (0 1 0);
+            }
+	}
+}

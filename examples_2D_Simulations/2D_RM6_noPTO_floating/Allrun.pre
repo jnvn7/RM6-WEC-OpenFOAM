@@ -1,0 +1,70 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------#
+# Prepare the simulation case
+# Clean the run directory
+./Allclean
+
+# Check required inputs
+file='flowParams'
+params=("waveType" "waveModel" "wavePeriod" "waveHeight" "waveAngle" "wavePhase" \
+        "simType" "turbModel" "tankLength" "tankHeight" "lengthContr" \
+        "waterDepth" "startTime" "endTime" "writeElev" "writeVTK" "Probe1" \
+        "Probe2" "Probe3" "Probe4" "Probe5" "mass" "objCG" "gyRad" "translate" \
+        "maxCo" "maxDeltaT")
+
+err=0
+for param in "${params[@]}"
+do
+    p=$(awk '{print $1}' $file | grep $param)
+    if [ -z "$p" ]; then
+        echo "Missing parameter: $param in flowParams"
+        err=1
+    fi
+done
+
+if [ $err -eq 1 ]; then
+    exit 1
+fi
+
+# Set up start time mode
+startTime=$(grep "startTime" flowParams | tr -d ';' | awk '{print $2}')
+if [ $startTime == "latestTime" ]; then
+    sed -i "/startFrom/s/.*/startFrom\t\tlatestTime;/" system/controlDict
+else
+    sed -i "/startFrom/s/.*/startFrom\t\tstartTime;/" system/controlDict
+fi
+
+#------------------------------------------------------------------------------#
+# Run OpenFOAM preparation steps
+# Restore polyMesh and 0 folder
+restore0Dir
+cp -r constant/polyMesh.orig constant/polyMesh
+
+# Run TopoSet
+runApplication topoSet
+if [ $? -ne 0 ]; then
+  echo "topoSet Failed"
+  exit 1
+fi
+
+# Run setFields
+runApplication setFields
+if [ $? -ne 0 ]; then
+  echo "setFields Failed"
+  exit 1
+fi
+
+# Run RenumberMesh
+runApplication renumberMesh -overwrite
+if [ $? -ne 0 ]; then
+  echo "renumberMesh Failed"
+  exit 1
+fi
+
+# Create a .foam file, to be used for visualization in paraview:
+touch viz.foam
+
+#------------------------------------------------------------------------------#
+

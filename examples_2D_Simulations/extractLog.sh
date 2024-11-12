@@ -5,8 +5,9 @@
 # Output: Output.txt will be placed inside the specified OF_case_directory
 # Note: the provided plotMotion.py and plotForces.py can be used to visualize the results.
 #------------------------------------------------------------------------------------------#
+nOuterCorrectors=3
+getNthLines='sed -n 1~'$nOuterCorrectors'p'
 trim='tr -d "()"'
-getNthLines='sed -n 1~3p'
 
 if [ -z "$1" ]; then
     echo $'\nMissing case input for extracting data!'
@@ -57,12 +58,12 @@ do
     echo '* Note: Data was extracted from log.overInterDyMFoam using extractLog.sh'     >> header
     echo '*       Can be visualized with plotMotion.py and/or plotForces.py'            >> header
     echo '****************************************************************************' >> header
-    echo "Time X(x3) Orientation(x9) dX(x3) dX_angular(x3) Force(x3) Moment(x3)"        >> Params
+    echo "Time X(x3) Orientation(x9) dX(x3) dX_angular(x3) Force(x3) Moment(x3)"        >> header
 
     # Create output file
     paste -d' ' Time Xt Xr Xdt Xdr Fnet Mnet >> output
 
-    cat header Params output >> $fileOut
+    cat header output >> $fileOut
 
-    rm header Params Time Xt Xr Xdt Xdr Fnet Mnet output
+    rm header Time Xt Xr Xdt Xdr Fnet Mnet output
 done

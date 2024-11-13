@@ -40,7 +40,12 @@ fi
 # Run OpenFOAM preparation steps
 # Restore polyMesh and 0 folder
 restore0Dir
-cp -r constant/polyMesh.orig constant/polyMesh
+if [ -d constant/polyMesh.orig ]; then
+    cp -r constant/polyMesh.orig constant/polyMesh
+else
+    echo "No OpenFOAM mesh folder polyMesh.orig found inside <constant>!"
+    exit 1
+fi
 
 # Run TopoSet
 runApplication topoSet

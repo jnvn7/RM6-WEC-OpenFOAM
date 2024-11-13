@@ -31,16 +31,21 @@ fi
 # Set up start time mode
 startTime=$(grep "startTime" flowParams | tr -d ';' | awk '{print $2}')
 if [ $startTime == "latestTime" ]; then
-    sed -i "/startFrom/s/.*/startFrom\t\tlatestTime;       \/\/ startTime or latestTime/" system/controlDict
+    sed -i "/startFrom/s/.*/startFrom\t\tlatestTime;/" system/controlDict
 else
-    sed -i "/startFrom/s/.*/startFrom\t\tstartTime;       \/\/ startTime or latestTime/" system/controlDict
+    sed -i "/startFrom/s/.*/startFrom\t\tstartTime;/" system/controlDict
 fi
 
 #------------------------------------------------------------------------------#
 # Run OpenFOAM preparation steps
 # Restore polyMesh and 0 folder
 restore0Dir
-cp -r constant/polyMesh.orig constant/polyMesh
+if [ -d constant/polyMesh.orig ]; then
+    cp -r constant/polyMesh.orig constant/polyMesh
+else
+    echo "No OpenFOAM mesh folder polyMesh.orig found inside <constant>!"
+    exit 1
+fi
 
 # Run TopoSet
 runApplication topoSet
@@ -56,15 +61,15 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# Create a .foam file, to be used for visualization in paraview:
-touch viz.foam
-
 # Run RenumberMesh
 runApplication renumberMesh -overwrite
 if [ $? -ne 0 ]; then
   echo "renumberMesh Failed"
   exit 1
 fi
+
+# Create a .foam file, to be used for visualization in paraview:
+touch viz.foam
 
 #------------------------------------------------------------------------------#
 

@@ -1,23 +1,23 @@
 ## 3D OpenFOAM FSI Overset Example Cases
 
 ### Cases
-- 3D Ducky Drop 
-- 3D Reference Model 6 (RM6) with Mooring (No Baffle/PTO) 
-- 3D Reference Model 6 (RM6) with Mooring and Baffle/PTO
+- 2D Ducky Drop 
+- 2D Reference Model 6 (RM6) Floating (No Baffle/PTO)
+- 2D Reference Model 6 (RM6) with Mooring (No Baffle/PTO)
 
 ### Setup
-- **Single Processor**: Use the `Allrun.ser` script in each case to run on a single processing unit.
+- **Single Processor**: Use the `Allrun.ser` script in each case to run on a single processing unit. 
 - **Multiple Processors**: Use the `Allrun` script in each case to run on multiple processing units.
-    - For parallel runs, the number and type of domain decompositions can be adjusted in `<system>/decomposeDict`.
+    - For parallel runs, the number and type of domain decompositions can be adjusted in `<system>/decomposeDict`. 
 - **Grid Generation**: The grid files (`<constant>/polyMesh`) are not included in these cases.
-    - Use `template_mesh_generation` with the provided `flowParams` and CAD file (place inside
-    `<constant>/polyMesh.orig_gen_grid_files`) to generate the grid for each case.
+    - Use `template_mesh_generation` with the provided `flowParams` and CAD file (place inside 
+    `<constant>/polyMesh.orig_gen_grid_files`) to generate the grid for each case. 
     - Alternatively, grids can be generated using the examples provided in `examples_mesh_generation` for each case.
 - **Wave conditions and time control**: All settings can be configured through the `flowParams` file located in the top folder of each case.
 
 ### Post-processing Scripts
 - **extractLog.sh**: Extracts motion (hull's CG) and forces from the OpenFOAM `log.overInterDyMFoam` file
-    - Usage: `./extractLog.sh OF_case_directory1/ OF_case_directory2/ etc.`
+    - Usage: `./extractLog.sh OF_case_directory1/ OF_case_directory2/ etc.` 
     - Output: `Output.txt` will be placed inside the specified OF_case_directory.
 
 - **extractTensions.sh**: Extracts restraint forces from the OpenFOAM `log.overInterDyMFoam` file
@@ -39,4 +39,3 @@
     - `Output.txt`: Contains motion and forces on the WEC.
     - `Tensions.txt` (if applicable): Contains restraint forces for cases with mooring systems.
     - Video rendering of the simulation results.
-

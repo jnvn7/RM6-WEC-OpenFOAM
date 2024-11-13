@@ -67,7 +67,7 @@
     rotate          ((0 1 0) 0);        // Axis and rotation angle in degree(s).
     hinge           (0.0,0.0,0.0);      // Scaled value. Rotational point
 
-// Grid Control
+// Grid Control (For meshing only; not required for running the case)
 
 	xContr          1;                  // Cells per wave length. Cell size = min(dx,dz)
 	zContr          8;		            // Cells per wave height

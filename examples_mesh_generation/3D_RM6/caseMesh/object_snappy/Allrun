@@ -1,0 +1,119 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------#
+## Clean residual files
+./Allclean
+
+# Read in user settings
+inputFile='flowParams'
+cp ../../$inputFile .
+
+sim3D=$(grep "sim3D" flowParams | tr -d ';' | awk '{print $2}')
+objName=$(grep "objName" $inputFile | tr -d ';' | awk '{print $2}')
+baffleName=$(grep "baffleName" $inputFile | tr -d ';' | awk '{print $2}')
+translate=$(grep "translate" $inputFile | tr 'translate,;' ' ')
+hinge=$(grep "hinge" $inputFile | tr 'hinge,;' ' ')
+rotate=$(grep "rotate" $inputFile | tr 'rotate,;' ' ')
+
+#------------------------------------------------------------------------------#
+# Process CAD file data
+# Move CAD and input files to the respective folders
+cp ../../$objName constant/triSurface/
+if [ -n "$baffleName" ]; then
+    cp ../../$baffleName constant/triSurface/
+fi
+
+# Extract Body Surface to make 3D mesh from the provided CAD file.
+if [ -n "$baffleName" ]; then
+    surfaceFeatureExtract -dict system/surfaceFeatureExtractDict_Baffle \
+     | grep -i 'bounding box' | tr -d '()' >> constant/objBoundingBox
+else
+    surfaceFeatureExtract | grep -i 'bounding box' | tr -d '()' >> constant/objBoundingBox
+fi
+
+# Run python script to get meshing parameters
+python3 ../../scripts/setCase.py -o
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+#------------------------------------------------------------------------------#
+## 3D grid generation - blockMesh and snappyHexMesh
+# Run blockMesh
+if [ $sim3D -eq 0 ]; then
+    runApplication blockMesh -dict system/blockMeshDict2D
+elif [ $sim3D -eq 1 ]; then
+    runApplication blockMesh
+else
+    echo "Specify 2D or 3D meshing."
+    exit 1
+fi
+
+if [ $? -ne 0 ]; then
+    echo "Run blockMesh Failed. Program is stopped!"
+    exit 1
+fi
+
+# Run snappyHexMesh
+if [ -n "$baffleName" ]; then
+    runApplication snappyHexMesh -dict system/snappyHexMeshDict_Baffle -overwrite
+    if [ $? -ne 0 ]; then
+        echo "Run Object SnappyHexMesh Failed. Program is stopped!"
+        exit 1
+    fi
+
+    # Create baffle patches (optional)
+    runApplication createPatch -overwrite
+    if [ $? -ne 0 ]; then
+        echo "Failed"
+        exit 1
+    else
+        rm log.createPatch
+    fi
+else
+    runApplication snappyHexMesh -overwrite
+    if [ $? -ne 0 ]; then
+        echo "Run Object SnappyHexMesh Failed. Program is stopped!"
+        exit 1
+    fi
+fi
+
+#------------------------------------------------------------------------------#
+# Rotate and transform the object to the specified coordinates
+if [ -n "$rotate" ]; then
+    if [ -z "$hinge" ]; then
+        echo "Missing rotational hinge position!"
+        exit 1
+    fi
+    transformPoints -centre "$hinge" -rotate-angle "$rotate"
+fi
+
+if [ -n "$translate" ]; then
+    transformPoints -translate "$translate"
+fi
+
+#------------------------------------------------------------------------------#
+## 2D grid generation
+
+if [ $sim3D -eq 0 ]; then
+    # Make a 2D mesh by extruding a patch and solve to steady state.
+    runApplication extrudeMesh -dict system/extrudeMeshDict2D
+    if [ $? -ne 0 ]; then
+    echo "Run Object extrudeMesh Failed. Program is stopped!"
+    exit 1
+    fi
+
+    runApplication createPatch -dict system/createPatchDict2D -overwrite
+    if [ $? -ne 0 ]; then
+    echo "Run Object createPatch Failed. Program is stopped!"
+    exit 1
+    fi
+fi
+
+#------------------------------------------------------------------------------#
+# Create paraview files
+runApplication foamToVTK -constant
+
+#------------------------------------------------------------------------------#
+

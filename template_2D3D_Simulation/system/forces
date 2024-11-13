@@ -17,3 +17,24 @@
         log true;
         CofR $objCGV_gl; // center of mass at time 0
     }
+
+    forcesTurb
+    {
+        type forces;
+        libs            (forces);
+        writeControl    adjustable;
+        writeInterval   $writeElev;
+
+        patches
+        (
+            "baffle.*"
+        );
+
+        pName p;
+        UName U;
+        rhoName rho;
+        log true;
+        CofR $objCGV_gl; // center of mass at time 0
+    }
+
+

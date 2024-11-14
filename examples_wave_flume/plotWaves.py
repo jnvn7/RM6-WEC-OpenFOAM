@@ -33,7 +33,7 @@ if (nCases < 1):
 
 # Extract wave data. Default for wavePath is in OpenFOAM <postProcessing>. 
 # Here it is set to pre-packaged data
-wavePath = "prePackaged_postProcessing/waveProbes/*/height.dat"
+wavePath = "postProcessing/waveProbes/*/height.dat"
 iProbe = 3          # Set the probe number to plot. 
 nStart = 5          # Number of wave cycles to remove initial transient effects.
 nFFT_reg = 5        # Number of regular wave cycles for FFT analysis.

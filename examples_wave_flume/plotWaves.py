@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import sys
 import os
 #---------------------------------Plot settings-----------------------------#
-#plt.rcParams['figure.dpi'] = 400
+# plt.rcParams['figure.dpi'] = 400
 colors = np.array(
 ['#4477AA', # blue
   '#66CCEE', # cyan

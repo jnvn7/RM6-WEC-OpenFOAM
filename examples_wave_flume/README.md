@@ -75,8 +75,7 @@ should display the plot in Figure 2 below.
 _Note:_ In this case, ignore the ``Refinement level'' plot on the right panel, which is a helpful feature for plotting mesh refinement studies but is not necessarily relevant for comparing two different wave cases. 
 
 ### Comparing with pre-packaged wave probe data for example cases
-For each example case, pre-packaged wave probe data is provided as a "sanity check" for the user to compare with their own simulated data. This data is housed in the <tt>prePackaged-postProcessing</tt> directory of each example case. If the case has run correctly, the user-generated wave probe data in <tt>postProcessing</tt> should match the data in <tt>prePackaged-postProcessing</tt>. 
-
+For each example case, pre-packaged wave probe data is provided as a "sanity check" for the user to compare with their own simulated data. This data is housed in the "prepackaged" version of each case. Users can run the case in the "empty" version of the example, and then compare the output data with the "prepackaged" version. 
 To check if this is the case, the user can use the provided python script <tt>plotWaves.py</tt> as described above, with the input arguments being the directories of the user-generated and pre-packaged data, i.e. 
 ```
 python plotWaves.py case2_regular case2_regular_prepackaged

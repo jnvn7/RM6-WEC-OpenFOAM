@@ -20,8 +20,8 @@
 
     waveType        0;		    // 0: regular. 1: irregular
     waveModel       StokesII;	// For irregular wave, follow format above.
-    waveHeight      0.2;
-    wavePeriod      2.7;
+    waveHeight      0.18;
+    wavePeriod      2.71;
 	waveAngle	    0.0;
 	wavePhase	    0.0;
 
@@ -32,8 +32,8 @@
 
 	tankLength	    0.0;		// Set to 0 to parameterize with waveLength*lengthContr
 	tankHeight	    6.8;		// Set to 0 for default (2x waterDepth)
-	tankWidth	    10;		    // Only use for 3D simulation. 
-	lengthContr	    2;		    // tankLength = lengthContr*waveLength
+	tankWidth	    12;		    // Only use for 3D simulation. 
+	lengthContr	    4;		    // tankLength = lengthContr*waveLength
 
 // Time Control
 	
@@ -55,23 +55,24 @@
 \*------------------------------------------------------------*/
 
 // Model definition - CAD model should be placed at the top directory
+// Following Bull et al. (2014) for the RM6 properties (Table 7)
 
-    objName         ducky.stl;                // CAD model placed in the top directory
-    mass            53;  
-    objCG           (0.0,0.0,0.0);  
-    gyRad           (0.2327,0.2606,0.2952); 
-    translate       (0.0,0.0,0.6);      
+    objName         rm6.stl;                // CAD model placed in the top directory
+    mass            600;                    // Scaled value. Full scale (2024657)  
+    objCG           (0.0,0.0,-0.286);       // Scaled value. WEC CG relative to the CAD coordinate system
+    gyRad           (0.8353,0.95533,0.9693); // Scaled value. Radius of gyration
+    translate       (0.0,0.0,0.0);      // Scaled value
 
     // Optional
-    objScale        1.0;
+    objScale        0.0667;
     rotate          ((0 1 0) 0);        // Axis and rotation angle in degree(s).
     hinge           (0.0,0.0,0.0);      // Scaled value. Rotational point
 
 // Grid Control
 
 	xContr          1;                  // Cells per wave length. Cell size = min(dx,dz)
-	zContr          8;		            // Cells per wave height
-	hContr		    1.0;                // Height of refinement zone over waveHeight
+	zContr          4;		            // Cells per wave height
+	hContr		    2.0;                // Height of refinement zone over waveHeight
     nRefineZones    4;                  // Refinement level from coarsest to finest (WEC area)
     zoneHeightRatio 0.3;                // Growth ratio of zone heights
     zoneWidthRatio  0.3;                // Growth ratio of zone widths

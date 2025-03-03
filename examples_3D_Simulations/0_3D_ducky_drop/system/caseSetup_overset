@@ -1,0 +1,83 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+|              OpenFOAM Wave Tank and Wave Setup Script                       |
+|                                                                             |
+|   Description: script to calculate blockMesh and waveProperties parameters  |
+|   Author: JN                                                                |
+|   Contact: nnguye@sandia.gov                                                |
+|                                                                             |
+\*---------------------------------------------------------------------------*/
+
+#include "../flowParams";
+
+// Constants
+
+	PI	#eval { pi() };
+        g       9.81;
+
+// Calc wavelength based on deep water wave approximation
+
+    waveLength      #eval { $g/(2.0*$PI)*$wavePeriod*$wavePeriod };
+
+// Wave Tank Dimensions
+
+    #if #eval {$tankLength == 0}
+        tankLength      #eval { $lengthContr*$waveLength };
+    #endif
+
+    #if #eval {$tankHeight == 0}
+        tankHeight      #eval { 2.0*$waterDepth };
+    #endif
+    tankShiftX          #eval { $tankLength/2 };
+    tankCentr           (#eval { $tankLength/2 } 0.0 0.0);
+
+// WEC's properties
+
+    mass                $mass;
+
+    // Cast inputs to OF vector format
+    translateV          #eval{vector $translate};
+    objCGV              #eval{ vector $objCG };     // Wec's cg
+    gyRadV              #eval{vector $gyRad};       // Radius of Gyration
+
+    // Convert from body's coordinates to the flume's (global) coordinate system
+    objCGV_gl           #eval { $[(vector) objCGV] + $[(vector) translateV]
+                                    + $[(vector) tankCentr] };
+
+    // Convert radius of gyration to moment of inertia
+    rXGyr           #eval { $[(vector) gyRadV].x() };
+    rYGyr           #eval { $[(vector) gyRadV].y() };
+    rZGyr           #eval { $[(vector) gyRadV].z() };
+
+    Mx              #eval { $rXGyr*$rXGyr*$mass };
+    My              #eval { $rYGyr*$rYGyr*$mass };
+    Mz              #eval { $rZGyr*$rZGyr*$mass };
+
+// Time control
+
+    #if #eval { $endTime == 0 }
+        #if #eval { $waveType == 0 }
+            endTime #eval { 20*$wavePeriod };
+        #elif #eval { $waveType == 1 } 
+            endTime #eval { 500*$wavePeriod };
+        #else
+            flagErr        #codeStream
+            {
+                code
+                #{
+                    Info << nl << "'Invalid waveType input. 0: Regular Waves. 1: Irregular Waves." << nl << nl;
+                    const int err=1;
+                    std::exit(err);
+                #};
+            };
+        #endif
+    #endif
+
+// Wave Probes
+    Probe1          #eval { $Probe1*$waveLength };
+    Probe2          #eval { $Probe2*$waveLength };
+    Probe3          #eval { $Probe3*$waveLength };
+    Probe4          #eval { $Probe4*$waveLength };
+    Probe5          #eval { $Probe5*$waveLength };
+
+// ************************************************************************* //
+

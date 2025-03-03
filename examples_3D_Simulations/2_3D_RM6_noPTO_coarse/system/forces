@@ -1,0 +1,19 @@
+    // record forces/moments on body
+    forcesOE
+    {
+        type forces;
+        libs            (forces);
+        writeControl    adjustable;
+        writeInterval   $writeElev;
+
+        patches
+        (
+            "object"
+        );
+
+        pName p;
+        UName U;
+        rhoName rho;
+        log true;
+        CofR $objCGV_gl; // center of mass at time 0
+    }

@@ -1,0 +1,87 @@
+/*---------------------------------------------------------------------------*\
+|              Wave Tank and Wave Setup                                       |
+|                                                                             |
+| Available models (waveModel specification):                                 |
+|      Regular: StokesI (Airy), Stokes II, StokesV, Boussinesq,               | 
+|               Cnoidal, Grimshaw, streamFunction.                            |
+|      Irregular: Spectrum: PM (Pierson Moskowitz), Jonswap, Bretschneider    |
+|                 Usage: spectrumName(freq_min,freq_max,#freqs)               |
+|                        i.e. Jonswap(0.1,2.0,500)                            |
+\*---------------------------------------------------------------------------*/
+
+// Inlet Flow parameters
+
+	Umean		0.0;
+
+// Wave parameters
+
+	sim3D		    1;		    // 0: 2D. 1: 3D
+	waterDepth	    4.0;		//
+
+    waveType        0;		    // 0: regular. 1: irregular
+    waveModel       StokesII;	// For irregular wave, follow format above.
+    waveHeight      0.18;
+    wavePeriod      2.71;
+	waveAngle	    0.0;
+	wavePhase	    0.0;
+
+    simType         RAS;            // laminar or RAS
+    turbModel       realizableKE;   // kEpsilon, kOmegaSST, realizableKE, etc.
+
+// Wave Tank Dimensions
+
+	tankLength	    0.0;		// Set to 0 to parameterize with waveLength*lengthContr
+	tankHeight	    6.8;		// Set to 0 for default (2x waterDepth)
+	tankWidth	    12;		    // Only use for 3D simulation. 
+	lengthContr	    4;		    // tankLength = lengthContr*waveLength
+
+// Time Control
+	
+    startTime       0.0;        // or latestTime
+	endTime		    0;	        // Set as 0 to for 20T (regular) and 500T (irregular)
+	writeElev	    0.1;		// second(s)
+	writeVTK	    0.2;		// second(s)
+
+// Wave Probe Distance from Tank Inlet
+
+    Probe1          0.1;        // Multiple of waveLength from the flume inlet
+    Probe2          0.5;
+    Probe3          1.0;
+    Probe4          1.5;
+    Probe5          2.0;
+
+/*------------------------------------------------------------*\
+|             Grid and Time Step Control                       |
+\*------------------------------------------------------------*/
+
+// Model definition - CAD model should be placed at the top directory
+// Following Bull et al. (2014) for the RM6 properties (Table 7)
+
+    objName         rm6.stl;                // CAD model placed in the top directory
+    mass            600;                    // Scaled value. Full scale (2024657)  
+    objCG           (0.0,0.0,-0.286);       // Scaled value. WEC CG relative to the CAD coordinate system
+    gyRad           (0.8353,0.95533,0.9693); // Scaled value. Radius of gyration
+    translate       (0.0,0.0,0.0);      // Scaled value
+
+    // Optional
+    objScale        0.0667;
+    rotate          ((0 1 0) 0);        // Axis and rotation angle in degree(s).
+    hinge           (0.0,0.0,0.0);      // Scaled value. Rotational point
+
+// Grid Control
+
+	xContr          1;                  // Cells per wave length. Cell size = min(dx,dz)
+	zContr          2;		            // Cells per wave height
+	hContr		    2.0;                // Height of refinement zone over waveHeight
+    nRefineZones    4;                  // Refinement level from coarsest to finest (WEC area)
+    zoneHeightRatio 0.3;                // Growth ratio of zone heights
+    zoneWidthRatio  0.3;                // Growth ratio of zone widths
+    nLayerOverlap   10;                 // Number of cell layers extending from the WEC wall
+
+// Time Step Control
+
+    maxCo           0.65;   
+	maxDeltaT		0.01;
+
+
+// ************************************************************************* //

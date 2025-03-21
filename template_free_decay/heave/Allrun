@@ -1,0 +1,35 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------#
+
+# Check if the run is new or restarting
+if [ ! -d processor0 ] && [ ! -d data* ]
+then
+  ./Allrun.pre
+
+  ## Decompose Mesh
+  runApplication decomposePar
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+fi
+
+## Run Overset solver
+runParallel $(getApplication)
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+#runParallel redistributePar -reconstruct
+#if [ $? -ne 0 ]; then
+#  exit 1
+#fi
+
+#runApplication foamToVTK
+#if [ $? -ne 0 ]; then
+#  exit 1
+#fi
+
+#------------------------------------------------------------------------------#
+

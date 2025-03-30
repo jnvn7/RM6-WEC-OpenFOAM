@@ -16,9 +16,13 @@
 - **Wave conditions and time control**: All settings can be configured through the `flowParams` file located in the top folder of each case.
 
 ### Post-processing Scripts
-- **extractLog.sh**: Extracts motion (hull's CG) and forces from the OpenFOAM `log.overInterDyMFoam` file
-    - Usage: `./extractLog.sh OF_case_directory1/ OF_case_directory2/ etc.` 
-    - Output: `Output.txt` will be placed inside the specified OF_case_directory.
+- **extractMotion.sh**: Extracts motion (hull's CG) from the OpenFOAM `log.overInterDyMFoam` file
+    - Usage: `./extractMotion.sh OF_case_directory1/ OF_case_directory2/ etc.`
+    - Output: `Motion.txt` will be placed inside the specified OF_case_directory.
+
+- **extractForces.sh**: Extracts body's forces from the OpenFOAM `log.overInterDyMFoam` file
+    - Usage: `./extractForces.sh OF_case_directory1/ OF_case_directory2/ etc.`
+    - Output: `Forces.txt` will be placed inside the specified OF_case_directory.
 
 - **extractTensions.sh**: Extracts restraint forces from the OpenFOAM `log.overInterDyMFoam` file
     - Usage: `./extractTensions.sh OF_case_directory1/ OF_case_directory2/ etc.`
@@ -36,6 +40,7 @@
 ### Prepackaged Data
 
 - For each case, the following pre-run data are included:
-    - `Output.txt`: Contains motion and forces on the WEC.
+    - `Motion.txt`: Contains WEC's motion time series.
+    - `Forces.txt`: Contains time series of forces on the WEC.
     - `Tensions.txt` (if applicable): Contains restraint forces for cases with mooring systems.
     - Video rendering of the simulation results.

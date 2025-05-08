@@ -16,8 +16,10 @@ if [ $? -ne 0 ]; then
 fi
 
 # Move the grid so  the flume starts at x = 0
-translate=$(checkMesh | grep "Overall domain bounding" | tr -d '()' | awk '{print $5}')
-transformPoints -translate "(- $translate 0 0)"
+p1=$(checkMesh | grep "Overall domain bounding" | tr -d '()' | awk '{print $5}')
+p2=$(checkMesh | grep "Overall domain bounding" | tr -d '()' | awk '{print $8}')
+translate=$(echo "scale=10; ( $p2 - $p1 ) / 2" | bc)
+transformPoints -translate "($translate 0 0)"
 
 # Keep a copy of flowParams inside the meshing folder
 cp ../../flowParams constant/polyMesh

@@ -97,9 +97,10 @@ xCellsf = int(objLength/cellSize+nLayerOverlap)
 yCellsf = int(objWidth/cellSize+nLayerOverlap)          
 zCellsf = int(objHeight/cellSize+nLayerOverlap)         
 
-xc = (Xfn+Xfp)/2
-yc = (Yfn+Yfp)/2
-zc = (Zfn+Zfp)/2
+# Set to align with the CAD model's origin
+xc = 0 #(Xfn+Xfp)/2 
+yc = 0 #(Yfn+Yfp)/2
+zc = 0 #(Zfn+Zfp)/2
 
 if (sim3D == 0):
     Yfn = yc - tankWidth2D/2

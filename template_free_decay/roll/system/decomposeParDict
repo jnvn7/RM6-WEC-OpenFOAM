@@ -14,15 +14,11 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-nNodes  8;
+nNodes  1;
 cpuPN   36;
 
 numberOfSubdomains #eval { $nNodes*$cpuPN };
-method          hierarchical;
-coeffs
-{
-    n           ($numberOfSubdomains 1 1);
-}
+method          scotch;
 
 
 // ************************************************************************* //

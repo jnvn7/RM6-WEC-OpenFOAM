@@ -59,7 +59,6 @@ sixDoFRigidBodyMotionCoeffs
             heaveOnly
             {
                     sixDoFRigidBodyMotionConstraint line;
-                    centreOfRotation $centreOfMass;
                     direction (0 0 1);
             }
 	}
